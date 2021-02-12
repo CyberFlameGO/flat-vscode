@@ -66,8 +66,6 @@ export class Credentials {
       { createIfNone: true }
     );
 
-    console.log(session);
-
     this.octokit = new Octokit.Octokit({
       auth: session.accessToken,
     });

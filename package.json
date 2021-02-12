@@ -10,7 +10,8 @@
     "Other"
   ],
   "activationEvents": [
-    "onCommand:data-experiment.getGitHubUser"
+    "onCommand:data-experiment.getGitHubUser",
+    "onView:repositories"
   ],
   "main": "./out/extension.js",
   "contributes": {
@@ -19,7 +20,16 @@
         "command": "data-experiment.getGitHubUser",
         "title": "Auth with GitHub"
       }
-    ]
+    ],
+    "views": {
+      "explorer": [
+        {
+          "id": "repositories",
+          "name": "Repositories",
+          "contextualTitle": "Repositories"
+        }
+      ]
+    }
   },
   "scripts": {
     "vscode:prepublish": "yarn run compile",
@@ -43,6 +53,7 @@
     "vscode-test": "^1.5.0"
   },
   "dependencies": {
-    "@octokit/rest": "^18.1.0"
+    "@octokit/rest": "^18.1.0",
+    "@octokit/types": "^6.8.3"
   }
 }
