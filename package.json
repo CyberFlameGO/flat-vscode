@@ -1,6 +1,6 @@
 {
-  "name": "data-experiment",
-  "displayName": "data-experiment",
+  "name": "flat",
+  "displayName": "flat",
   "description": "",
   "version": "0.0.1",
   "engines": {
@@ -10,15 +10,18 @@
     "Other"
   ],
   "activationEvents": [
-    "onCommand:data-experiment.getGitHubUser",
-    "onView:repositories"
+    "*"
   ],
   "main": "./out/extension.js",
   "contributes": {
     "commands": [
       {
-        "command": "data-experiment.getGitHubUser",
+        "command": "flat.getGitHubUser",
         "title": "Auth with GitHub"
+      },
+      {
+        "command": "flat.createAction",
+        "title": "Create Action"
       }
     ],
     "views": {
@@ -54,6 +57,7 @@
   },
   "dependencies": {
     "@octokit/rest": "^18.1.0",
-    "@octokit/types": "^6.8.3"
+    "@octokit/types": "^6.8.3",
+    "cronstrue": "^1.109.0"
   }
 }
