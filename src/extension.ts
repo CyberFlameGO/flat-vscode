@@ -1,5 +1,7 @@
 import * as vscode from "vscode";
 import * as queryString from "query-string";
+import * as path from "path";
+import * as fs from "fs";
 
 import { Credentials } from "./credentials";
 import { RepositoriesProvider } from "./providers";
@@ -16,6 +18,59 @@ function makeRangeFromMatch(line: number, match: RegExpMatchArray) {
     // @ts-ignore
     new vscode.Position(line, match.index + match[0].length)
   );
+}
+
+interface CommitOptions {
+  all?: boolean | "tracked";
+}
+
+interface Branch {
+  readonly name: string;
+}
+
+interface RepositoryState {
+  HEAD: Branch | undefined | null;
+  refs: Branch[];
+  workingTreeChanges: Change[];
+  indexChanges: Change[];
+  mergeChanges: Change[];
+  onDidChange: vscode.Event<void>;
+}
+
+export interface Change {
+  readonly uri: vscode.Uri;
+}
+
+export interface RawRepository {
+  add(resources: vscode.Uri[]): Promise<void>;
+  commit(message: string): Promise<void>;
+}
+
+export interface Repository {
+  state: RepositoryState;
+
+  createBranch(name: string, checkout: boolean, ref?: string): Promise<void>;
+  deleteBranch(name: string, force?: boolean): Promise<void>;
+
+  checkout(treeish: string): Promise<void>;
+
+  push(
+    remoteName?: string,
+    branchName?: string,
+    setUpstream?: boolean
+  ): Promise<void>;
+
+  commit(message: string, opts?: CommitOptions): Promise<void>;
+
+  _repository: RawRepository;
+}
+
+export interface GitAPI {
+  repositories: Repository[];
+
+  getRepository(uri: vscode.Uri): Repository | null;
+  onDidOpenRepository: vscode.Event<Repository>;
+  onDidCloseRepository: vscode.Event<Repository>;
 }
 
 export async function activate(context: vscode.ExtensionContext) {
@@ -141,6 +196,63 @@ export async function activate(context: vscode.ExtensionContext) {
 
         editor.setDecorations(decorationType, decorations);
       }
+    })
+  );
+
+  context.subscriptions.push(
+    vscode.commands.registerCommand("flat.saveAndCommit", async () => {
+      // TODO: Bail out if user has changes staged already.
+
+      // Step 1. Save file to disk
+      const editor = vscode.window.activeTextEditor;
+
+      if (!editor) {
+        return;
+      }
+
+      const { document } = editor;
+      const action = document.getText();
+
+      let rootPath: vscode.WorkspaceFolder;
+
+      const folders = vscode.workspace.workspaceFolders;
+      if (!folders) {
+        return;
+      }
+
+      rootPath = folders[0];
+      const workflowsDir = path.join(rootPath.uri.path, ".github/workflows");
+      fs.mkdirSync(workflowsDir, { recursive: true });
+      fs.writeFileSync(path.join(workflowsDir, "flat.yaml"), action);
+
+      // How do git stuff to stuff
+      const extension = vscode.extensions.getExtension("vscode.git");
+      if (!extension) {
+        return;
+      }
+
+      if (!extension.isActive) {
+        await extension.activate();
+      }
+
+      const git = extension.exports.getAPI(1);
+      const repository: Repository = git.repositories[0];
+      const realRepository = repository?._repository;
+
+      // Add file
+      await realRepository.add([
+        vscode.Uri.parse(path.join(workflowsDir, "flat.yaml")),
+      ]);
+
+      await realRepository.commit("feat: add flat.yaml workflow");
+
+      await vscode.commands.executeCommand(
+        "workbench.action.closeActiveEditor"
+      );
+
+      vscode.window.showInformationMessage(
+        "Created and committed flat.yml 🎊! Push to GitHub to trigger the action."
+      );
     })
   );
 
