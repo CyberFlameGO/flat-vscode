@@ -26,10 +26,6 @@
     },
     "commands": [
       {
-        "command": "flat.getGitHubUser",
-        "title": "Auth with GitHub"
-      },
-      {
         "command": "flat.createAction",
         "title": "Create Action"
       },

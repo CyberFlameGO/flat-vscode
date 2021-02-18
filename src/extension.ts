@@ -3,8 +3,6 @@ import * as queryString from "query-string";
 import * as path from "path";
 import * as fs from "fs";
 
-import { Credentials } from "./credentials";
-import { RepositoriesProvider } from "./providers";
 import { makeActionYaml } from "./lib";
 
 function escapeRegExp(str: string) {
@@ -67,41 +65,12 @@ export interface Repository {
 
 export interface GitAPI {
   repositories: Repository[];
-
   getRepository(uri: vscode.Uri): Repository | null;
   onDidOpenRepository: vscode.Event<Repository>;
   onDidCloseRepository: vscode.Event<Repository>;
 }
 
 export async function activate(context: vscode.ExtensionContext) {
-  // Authentication
-  const credentials = new Credentials();
-  await credentials.initialize(context);
-
-  const octokit = await credentials.getOctokit();
-
-  context.subscriptions.push(
-    vscode.commands.registerCommand("flat.getGitHubUser", async () => {
-      const octokit = await credentials.getOctokit();
-      const userInfo = await octokit.users.getAuthenticated();
-
-      vscode.window.showInformationMessage(
-        `Logged into GitHub as ${userInfo.data.login}`
-      );
-    })
-  );
-
-  context.subscriptions.push(
-    vscode.commands.registerCommand(
-      "flat.openIssueOnGitHub",
-      (issueUrl: string) =>
-        vscode.commands.executeCommand(
-          "vscode.open",
-          vscode.Uri.parse(issueUrl)
-        )
-    )
-  );
-
   const scheme = "flat";
 
   const flatProvider = new (class
@@ -255,9 +224,6 @@ export async function activate(context: vscode.ExtensionContext) {
       );
     })
   );
-
-  const reposProvider = new RepositoriesProvider(octokit);
-  vscode.window.registerTreeDataProvider("repositories", reposProvider);
 }
 
 export function deactivate() {}
