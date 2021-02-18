@@ -3,21 +3,12 @@ import * as queryString from "query-string";
 import * as path from "path";
 import * as fs from "fs";
 
-import { makeActionYaml, VSCodeGit } from "./lib";
-import { Repository } from "./types";
-
-function escapeRegExp(str: string) {
-  return str.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
-}
-
-function makeRangeFromMatch(line: number, match: RegExpMatchArray) {
-  return new vscode.Range(
-    // @ts-ignore
-    new vscode.Position(line, match.index),
-    // @ts-ignore
-    new vscode.Position(line, match.index + match[0].length)
-  );
-}
+import {
+  escapeRegExp,
+  makeActionYaml,
+  makeRangeFromMatch,
+  VSCodeGit,
+} from "./lib";
 
 export async function activate(context: vscode.ExtensionContext) {
   const scheme = "flat";

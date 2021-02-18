@@ -102,3 +102,16 @@ export class VSCodeGit {
     this.repository._repository.commit(message);
   }
 }
+
+export function escapeRegExp(str: string) {
+  return str.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+}
+
+export function makeRangeFromMatch(line: number, match: RegExpMatchArray) {
+  return new vscode.Range(
+    // @ts-ignore
+    new vscode.Position(line, match.index),
+    // @ts-ignore
+    new vscode.Position(line, match.index + match[0].length)
+  );
+}
