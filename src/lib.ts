@@ -1,3 +1,6 @@
+import * as vscode from "vscode";
+import { GitAPI } from "./types";
+
 interface ActionParams {
   name: string;
   cron: string;
@@ -40,4 +43,38 @@ jobs:
         git commit -m "Latest data: \${timestamp}" || exit 0
         git push
 `;
+}
+
+interface GitExtension {
+  getAPI(version: number): GitAPI;
+}
+
+export class VSCodeGit {
+  extension: vscode.Extension<GitExtension>;
+
+  constructor() {
+    const gitExtension = vscode.extensions.getExtension("vscode.git");
+
+    if (!gitExtension) {
+      throw new Error("Git extension not found");
+    }
+    this.extension = gitExtension;
+
+    if (!this.extension.isActive) {
+      this.activateExtension();
+    }
+  }
+
+  async activateExtension() {
+    await this.extension.activate();
+  }
+
+  get rawGit() {
+    // Unsure about this magic number, but it works.
+    return this.extension.exports.getAPI(1);
+  }
+
+  get repository() {
+    return this.rawGit.repositories[0]._repository;
+  }
 }

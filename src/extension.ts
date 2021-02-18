@@ -3,7 +3,8 @@ import * as queryString from "query-string";
 import * as path from "path";
 import * as fs from "fs";
 
-import { makeActionYaml } from "./lib";
+import { makeActionYaml, VSCodeGit } from "./lib";
+import { Repository } from "./types";
 
 function escapeRegExp(str: string) {
   return str.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
@@ -16,58 +17,6 @@ function makeRangeFromMatch(line: number, match: RegExpMatchArray) {
     // @ts-ignore
     new vscode.Position(line, match.index + match[0].length)
   );
-}
-
-interface CommitOptions {
-  all?: boolean | "tracked";
-}
-
-interface Branch {
-  readonly name: string;
-}
-
-interface RepositoryState {
-  HEAD: Branch | undefined | null;
-  refs: Branch[];
-  workingTreeChanges: Change[];
-  indexChanges: Change[];
-  mergeChanges: Change[];
-  onDidChange: vscode.Event<void>;
-}
-
-export interface Change {
-  readonly uri: vscode.Uri;
-}
-
-export interface RawRepository {
-  add(resources: vscode.Uri[]): Promise<void>;
-  commit(message: string): Promise<void>;
-}
-
-export interface Repository {
-  state: RepositoryState;
-
-  createBranch(name: string, checkout: boolean, ref?: string): Promise<void>;
-  deleteBranch(name: string, force?: boolean): Promise<void>;
-
-  checkout(treeish: string): Promise<void>;
-
-  push(
-    remoteName?: string,
-    branchName?: string,
-    setUpstream?: boolean
-  ): Promise<void>;
-
-  commit(message: string, opts?: CommitOptions): Promise<void>;
-
-  _repository: RawRepository;
-}
-
-export interface GitAPI {
-  repositories: Repository[];
-  getRepository(uri: vscode.Uri): Repository | null;
-  onDidOpenRepository: vscode.Event<Repository>;
-  onDidCloseRepository: vscode.Event<Repository>;
 }
 
 export async function activate(context: vscode.ExtensionContext) {
@@ -169,6 +118,13 @@ export async function activate(context: vscode.ExtensionContext) {
   );
 
   context.subscriptions.push(
+    vscode.commands.registerCommand("flat.test", () => {
+      const gitClient = new VSCodeGit();
+      const repo = gitClient.repository;
+    })
+  );
+
+  context.subscriptions.push(
     vscode.commands.registerCommand("flat.saveAndCommit", async () => {
       // TODO: Bail out if user has changes staged already.
 
@@ -194,26 +150,12 @@ export async function activate(context: vscode.ExtensionContext) {
       fs.mkdirSync(workflowsDir, { recursive: true });
       fs.writeFileSync(path.join(workflowsDir, "flat.yaml"), action);
 
-      // How do git stuff to stuff
-      const extension = vscode.extensions.getExtension("vscode.git");
-      if (!extension) {
-        return;
-      }
+      const gitClient = new VSCodeGit();
+      const repo = gitClient.repository;
 
-      if (!extension.isActive) {
-        await extension.activate();
-      }
+      await repo.add([vscode.Uri.parse(path.join(workflowsDir, "flat.yaml"))]);
 
-      const git = extension.exports.getAPI(1);
-      const repository: Repository = git.repositories[0];
-      const realRepository = repository?._repository;
-
-      // Add file
-      await realRepository.add([
-        vscode.Uri.parse(path.join(workflowsDir, "flat.yaml")),
-      ]);
-
-      await realRepository.commit("feat: add flat.yaml workflow");
+      await repo.commit("feat: add flat.yaml workflow");
 
       await vscode.commands.executeCommand(
         "workbench.action.closeActiveEditor"
