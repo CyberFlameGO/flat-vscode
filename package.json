@@ -26,10 +26,6 @@
     },
     "commands": [
       {
-        "command": "flat.test",
-        "title": "Create Test"
-      },
-      {
         "command": "flat.createAction",
         "title": "Create Action"
       },

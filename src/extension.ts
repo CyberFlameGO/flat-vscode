@@ -118,17 +118,29 @@ export async function activate(context: vscode.ExtensionContext) {
   );
 
   context.subscriptions.push(
-    vscode.commands.registerCommand("flat.test", () => {
-      const gitClient = new VSCodeGit();
-      const repo = gitClient.repository;
-    })
-  );
-
-  context.subscriptions.push(
     vscode.commands.registerCommand("flat.saveAndCommit", async () => {
-      // TODO: Bail out if user has changes staged already.
+      // Initialize git client.
+      const gitClient = new VSCodeGit();
 
-      // Step 1. Save file to disk
+      // Check if we're in a repo. Bail if not.
+      const repo = gitClient.repository;
+      if (!repo) {
+        await vscode.window.showErrorMessage(
+          "Hmm, this doesn't look like a Git repository. Are you sure you're in the right directory?"
+        );
+        return;
+      }
+
+      // Check if there are pending changes. Bail if so.
+      const stagedChanges = gitClient.workingTreeChanges;
+
+      if (stagedChanges.length > 0) {
+        await vscode.window.showErrorMessage(
+          "Bailing out! It looks like you already have some changes staged."
+        );
+        return;
+      }
+
       const editor = vscode.window.activeTextEditor;
 
       if (!editor) {
@@ -145,17 +157,17 @@ export async function activate(context: vscode.ExtensionContext) {
         return;
       }
 
+      // Write yaml to disk.
       rootPath = folders[0];
       const workflowsDir = path.join(rootPath.uri.path, ".github/workflows");
       fs.mkdirSync(workflowsDir, { recursive: true });
       fs.writeFileSync(path.join(workflowsDir, "flat.yaml"), action);
 
-      const gitClient = new VSCodeGit();
-      const repo = gitClient.repository;
-
-      await repo.add([vscode.Uri.parse(path.join(workflowsDir, "flat.yaml"))]);
-
-      await repo.commit("feat: add flat.yaml workflow");
+      // Add and commit.
+      await gitClient.add([
+        vscode.Uri.parse(path.join(workflowsDir, "flat.yaml")),
+      ]);
+      await gitClient.commit("feat: add flat.yaml workflow");
 
       await vscode.commands.executeCommand(
         "workbench.action.closeActiveEditor"

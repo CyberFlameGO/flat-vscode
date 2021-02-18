@@ -38,6 +38,20 @@ export interface RawRepository {
 
 export interface Repository {
   state: RepositoryState;
+
+  createBranch(name: string, checkout: boolean, ref?: string): Promise<void>;
+  deleteBranch(name: string, force?: boolean): Promise<void>;
+
+  checkout(treeish: string): Promise<void>;
+
+  push(
+    remoteName?: string,
+    branchName?: string,
+    setUpstream?: boolean
+  ): Promise<void>;
+
+  commit(message: string, opts?: CommitOptions): Promise<void>;
+
   _repository: RawRepository;
 }
 

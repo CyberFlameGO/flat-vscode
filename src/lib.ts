@@ -75,6 +75,30 @@ export class VSCodeGit {
   }
 
   get repository() {
-    return this.rawGit.repositories[0]._repository;
+    return this.rawGit.repositories[0];
+  }
+
+  get workingTreeChanges() {
+    if (!this.repository) {
+      throw new Error("No repository found. Are you sure you're in a repo?");
+    }
+
+    return this.repository.state.workingTreeChanges;
+  }
+
+  add(resources: vscode.Uri[]) {
+    if (!this.repository) {
+      throw new Error("No repository found. Are you sure you're in a repo?");
+    }
+
+    this.repository._repository.add(resources);
+  }
+
+  commit(message: string) {
+    if (!this.repository) {
+      throw new Error("No repository found. Are you sure you're in a repo?");
+    }
+
+    this.repository._repository.commit(message);
   }
 }
