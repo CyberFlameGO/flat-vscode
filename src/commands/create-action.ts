@@ -1,7 +1,7 @@
 import * as vscode from "vscode";
 import cronstrue from "cronstrue";
 
-import { buildVirtualDocument, isValidUrl } from "../lib";
+import { buildVirtualDocument, isValidUrl, getNonce } from "../lib";
 
 function createHTMLAction() {
   const sourceInputBox = vscode.window.createInputBox();
@@ -70,82 +70,51 @@ function createHTMLAction() {
   });
 }
 
-function getSqlWebViewContent() {
-  return `<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>SQL: Database Connection Info</title>
-    <link href="https://unpkg.com/tailwindcss@^2/dist/tailwind.min.css" rel="stylesheet">
-    <script type="text/javascript">
-      function app () {
-        return {
-          form: {
-            host: "",
-            port: "",
-            username: "",
-            password: "",
-            database: ""
-          },
-          isTesting: false,
-          handleTest () {
-            this.isTesting = true;
-          },
-          handleSubmit (e) {
-            e.preventDefault();
-            console.log(e)
-          }
-        }
-      }
-    </script>  
-    <script src="https://cdn.jsdelivr.net/gh/alpinejs/alpine@v2.x.x/dist/alpine.min.js" defer></script>
-</head>
-<body class="p-4">
-  <div x-data="app()">
-    <form class="space-y-4 flex flex-col" @submit="handleSubmit">
-      <input x-model="form.host" class="p-2 text-sm block text-black" placeholder="Host" />
-      <input x-model="form.port" class="p-2 text-sm block text-black" placeholder="Port " />
-      <input x-model="form.username" class="p-2 text-sm block text-black" placeholder="Username " />
-      <input x-model="form.password" class="p-2 text-sm block text-black" placeholder="Password " />
-      <input x-model="form.database" class="p-2 text-sm block text-black" placeholder="Database " />
-      <div class="flex space-x-4">
-        <button type="submit" class="bg-blue-700 text-white p-2 text-sm flex-1">Submit</button>
-        <button type="button" @click="handleTest" class="bg-blue-700 text-white p-2 text-sm flex-shrink-0">
-          <template x-if="isTesting">
-            <span>Testing...</span>
-          </template>
-          <template x-if="!isTesting">
-            <span>Test Connection</span>
-          </template>
-        </button>
-      </div>
-    </form>
-  </div>
-  
-</body>
-
-</html>`;
-}
-
-function createSQLAction() {
+function createSQLAction(context: vscode.ExtensionContext) {
   const panel = vscode.window.createWebviewPanel(
     "flatSql",
     "SQL: Database Connection Info",
     vscode.ViewColumn.One,
     {
       enableScripts: true,
+      localResourceRoots: [vscode.Uri.joinPath(context.extensionUri, "media")],
     }
   );
 
-  panel.webview.html = getSqlWebViewContent();
+  const scriptPathOnDisk = vscode.Uri.joinPath(
+    context.extensionUri,
+    "media",
+    "index.js"
+  );
+
+  const scriptUri = panel.webview.asWebviewUri(scriptPathOnDisk);
+
+  const nonce = getNonce();
+
+  panel.webview.html = `<!DOCTYPE html>
+			<html lang="en">
+			<head>
+				<meta charset="UTF-8">
+				<!--
+					Use a content security policy to only allow loading images from https or from our extension directory,
+					and only allow scripts that have a specific nonce.
+				-->
+				<meta http-equiv="Content-Security-Policy" content="default-src 'none'; style-src ${panel.webview.cspSource}; img-src ${panel.webview.cspSource} https:; script-src 'nonce-${nonce}';">
+				<meta name="viewport" content="width=device-width, initial-scale=1.0">
+				<title>Cat Coding</title>
+			</head>
+			<body>
+				<div>sup</div>
+				<script nonce="${nonce}" src="${scriptUri}"></script>
+			</body>
+			</html>`;
 }
 
 interface ActionItem extends vscode.QuickPickItem {
   value: string;
 }
 
-export const createAction = async () => {
+export const createAction = async (context: vscode.ExtensionContext) => {
   const quickpick = vscode.window.createQuickPick<ActionItem>();
   quickpick.ignoreFocusOut = true;
   quickpick.items = [
@@ -162,7 +131,7 @@ export const createAction = async () => {
   ];
   quickpick.show();
 
-  quickpick.onDidAccept((e) => {
+  quickpick.onDidAccept(() => {
     const [selected] = quickpick.selectedItems;
     quickpick.hide();
 
@@ -172,7 +141,7 @@ export const createAction = async () => {
           createHTMLAction();
           break;
         case "sql":
-          createSQLAction();
+          createSQLAction(context);
           break;
         default:
           break;

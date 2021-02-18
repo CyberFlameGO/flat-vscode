@@ -14,7 +14,9 @@ export async function activate(context: vscode.ExtensionContext) {
   );
 
   context.subscriptions.push(
-    vscode.commands.registerCommand("flat.createAction", createAction)
+    vscode.commands.registerCommand("flat.createAction", () =>
+      createAction(context)
+    )
   );
 
   context.subscriptions.push(
