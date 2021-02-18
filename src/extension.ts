@@ -2,13 +2,21 @@ import * as vscode from "vscode";
 import * as queryString from "query-string";
 import * as path from "path";
 import * as fs from "fs";
+import cronstrue from "cronstrue";
 
 import {
   escapeRegExp,
+  isValidUrl,
   makeActionYaml,
   makeRangeFromMatch,
   VSCodeGit,
 } from "./lib";
+
+interface BuildVirtualDocumentParams {
+  name: string;
+  cron: string;
+  source: string;
+}
 
 export async function activate(context: vscode.ExtensionContext) {
   const scheme = "flat";
@@ -38,73 +46,128 @@ export async function activate(context: vscode.ExtensionContext) {
     backgroundColor: "rgba(255, 255, 0, .25)",
   });
 
+  async function buildVirtualDocument(params: BuildVirtualDocumentParams) {
+    const { name, source, cron } = params;
+
+    const uri = vscode.Uri.parse(
+      `flat:/schedule.yaml?name=${name}&cron=${cron}&source=${source}`
+    );
+    let doc = await vscode.workspace.openTextDocument(uri);
+    await vscode.window.showTextDocument(doc, { preview: false });
+
+    const editor = vscode.window.activeTextEditor;
+
+    if (!editor) {
+      return;
+    }
+
+    const decorations: vscode.DecorationOptions[] = [];
+    const sourceCode = editor.document.getText();
+    const sourceCodeArr = sourceCode.split("\n");
+
+    const nameRegex = new RegExp(name);
+    const cronRegex = new RegExp(escapeRegExp(cron));
+    const sourceRegex = new RegExp(source, "i");
+
+    for (let line = 0; line < sourceCodeArr.length; line++) {
+      const nameMatch = sourceCodeArr[line].match(nameRegex);
+      const cronMatch = sourceCodeArr[line].match(cronRegex);
+      const sourceMatch = sourceCodeArr[line].match(sourceRegex);
+
+      if (nameMatch) {
+        const nameDecoration = {
+          range: makeRangeFromMatch(line, nameMatch),
+          hoverMessage: "Name of action",
+        };
+        decorations.push(nameDecoration);
+      }
+
+      if (cronMatch) {
+        const cronDecoration = {
+          range: makeRangeFromMatch(line, cronMatch),
+          hoverMessage: "CRON Schedule",
+        };
+        decorations.push(cronDecoration);
+      }
+
+      if (sourceMatch) {
+        const sourceDecoration = {
+          range: makeRangeFromMatch(line, sourceMatch),
+          hoverMessage: "Data Source",
+        };
+        decorations.push(sourceDecoration);
+      }
+    }
+
+    editor.setDecorations(decorationType, decorations);
+  }
+
   context.subscriptions.push(
     vscode.commands.registerCommand("flat.createAction", async () => {
-      const sourceUrl = await vscode.window.showInputBox({
-        prompt: "Enter full URL to data source",
+      const sourceInputBox = vscode.window.createInputBox();
+      sourceInputBox.placeholder = "URL";
+      sourceInputBox.title = "Enter fully qualified URL of data source";
+      sourceInputBox.ignoreFocusOut = true;
+      sourceInputBox.step = 1;
+      sourceInputBox.totalSteps = 3;
+
+      sourceInputBox.show();
+
+      sourceInputBox.onDidAccept(() => {
+        if (sourceInputBox.value && isValidUrl(sourceInputBox.value)) {
+          cronInputBox.show();
+        } else {
+          sourceInputBox.validationMessage = "You need to enter a valid URL";
+        }
       });
 
-      const cronSchedule = await vscode.window.showInputBox({
-        prompt: "Enter CRON schedule",
+      const cronInputBox = vscode.window.createInputBox();
+      cronInputBox.placeholder = "CRON";
+      cronInputBox.title = "Enter CRON schedule for this action";
+      cronInputBox.ignoreFocusOut = true;
+      cronInputBox.step = 2;
+      cronInputBox.totalSteps = 3;
+
+      cronInputBox.onDidAccept(() => {
+        if (cronInputBox.value && cronstrue.toString(cronInputBox.value)) {
+          nameInputBox.show();
+        }
       });
 
-      const actionName = await vscode.window.showInputBox({
-        prompt: "Enter name of action",
-      });
-
-      if (actionName && cronSchedule && sourceUrl) {
-        const uri = vscode.Uri.parse(
-          `flat:/schedule.yaml?name=${actionName}&cron=${cronSchedule}&source=${sourceUrl}`
-        );
-        let doc = await vscode.workspace.openTextDocument(uri);
-        await vscode.window.showTextDocument(doc, { preview: false });
-
-        const editor = vscode.window.activeTextEditor;
-
-        if (!editor) {
-          return;
+      cronInputBox.onDidChangeValue(() => {
+        if (!cronInputBox.value) {
+          cronInputBox.prompt = "";
         }
 
-        const decorations: vscode.DecorationOptions[] = [];
-        const sourceCode = editor.document.getText();
-        const sourceCodeArr = sourceCode.split("\n");
-
-        const nameRegex = new RegExp(actionName);
-        const cronRegex = new RegExp(escapeRegExp(cronSchedule));
-        const sourceRegex = new RegExp(sourceUrl, "i");
-
-        for (let line = 0; line < sourceCodeArr.length; line++) {
-          const nameMatch = sourceCodeArr[line].match(nameRegex);
-          const cronMatch = sourceCodeArr[line].match(cronRegex);
-          const sourceMatch = sourceCodeArr[line].match(sourceRegex);
-
-          if (nameMatch) {
-            const nameDecoration = {
-              range: makeRangeFromMatch(line, nameMatch),
-              hoverMessage: "Name of action",
-            };
-            decorations.push(nameDecoration);
-          }
-
-          if (cronMatch) {
-            const cronDecoration = {
-              range: makeRangeFromMatch(line, cronMatch),
-              hoverMessage: "CRON Schedule",
-            };
-            decorations.push(cronDecoration);
-          }
-
-          if (sourceMatch) {
-            const sourceDecoration = {
-              range: makeRangeFromMatch(line, sourceMatch),
-              hoverMessage: "Data Source",
-            };
-            decorations.push(sourceDecoration);
-          }
+        try {
+          const humanReadable = cronstrue.toString(cronInputBox.value);
+          cronInputBox.validationMessage = undefined;
+          cronInputBox.prompt = `✅ Will run: ${humanReadable}`;
+        } catch (e) {
+          cronInputBox.validationMessage = e;
         }
+      });
 
-        editor.setDecorations(decorationType, decorations);
-      }
+      const nameInputBox = vscode.window.createInputBox();
+      nameInputBox.placeholder = "Name";
+      nameInputBox.title = "Enter name for this action";
+      nameInputBox.ignoreFocusOut = true;
+      nameInputBox.step = 3;
+      nameInputBox.totalSteps = 3;
+
+      nameInputBox.onDidAccept(() => {
+        if (nameInputBox.value) {
+          nameInputBox.hide();
+          buildVirtualDocument({
+            name: nameInputBox.value,
+            cron: cronInputBox.value,
+            source: sourceInputBox.value,
+          });
+        } else {
+          nameInputBox.validationMessage =
+            "You need to enter a name for the action.";
+        }
+      });
     })
   );
 

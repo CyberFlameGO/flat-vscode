@@ -1,5 +1,6 @@
 import * as vscode from "vscode";
 import { GitAPI } from "./types";
+import { URL } from "url";
 
 interface ActionParams {
   name: string;
@@ -114,4 +115,16 @@ export function makeRangeFromMatch(line: number, match: RegExpMatchArray) {
     // @ts-ignore
     new vscode.Position(line, match.index + match[0].length)
   );
+}
+
+export function isValidUrl(input: string) {
+  let url;
+
+  try {
+    url = new URL(input);
+  } catch (_) {
+    return false;
+  }
+
+  return url.protocol === "http:" || url.protocol === "https:";
 }
