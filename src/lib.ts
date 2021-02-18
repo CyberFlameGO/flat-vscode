@@ -2,6 +2,8 @@ import * as vscode from "vscode";
 import { GitAPI } from "./types";
 import { URL } from "url";
 
+import { flatDecoration } from "./decorations";
+
 interface ActionParams {
   name: string;
   cron: string;
@@ -127,4 +129,66 @@ export function isValidUrl(input: string) {
   }
 
   return url.protocol === "http:" || url.protocol === "https:";
+}
+
+interface BuildVirtualDocumentParams {
+  name: string;
+  cron: string;
+  source: string;
+}
+
+export async function buildVirtualDocument(params: BuildVirtualDocumentParams) {
+  const { name, source, cron } = params;
+
+  const uri = vscode.Uri.parse(
+    `flat:/schedule.yaml?name=${name}&cron=${cron}&source=${source}`
+  );
+  let doc = await vscode.workspace.openTextDocument(uri);
+  await vscode.window.showTextDocument(doc, { preview: false });
+
+  const editor = vscode.window.activeTextEditor;
+
+  if (!editor) {
+    return;
+  }
+
+  const decorations: vscode.DecorationOptions[] = [];
+  const sourceCode = editor.document.getText();
+  const sourceCodeArr = sourceCode.split("\n");
+
+  const nameRegex = new RegExp(name);
+  const cronRegex = new RegExp(escapeRegExp(cron));
+  const sourceRegex = new RegExp(source, "i");
+
+  for (let line = 0; line < sourceCodeArr.length; line++) {
+    const nameMatch = sourceCodeArr[line].match(nameRegex);
+    const cronMatch = sourceCodeArr[line].match(cronRegex);
+    const sourceMatch = sourceCodeArr[line].match(sourceRegex);
+
+    if (nameMatch) {
+      const nameDecoration = {
+        range: makeRangeFromMatch(line, nameMatch),
+        hoverMessage: "Name of action",
+      };
+      decorations.push(nameDecoration);
+    }
+
+    if (cronMatch) {
+      const cronDecoration = {
+        range: makeRangeFromMatch(line, cronMatch),
+        hoverMessage: "CRON Schedule",
+      };
+      decorations.push(cronDecoration);
+    }
+
+    if (sourceMatch) {
+      const sourceDecoration = {
+        range: makeRangeFromMatch(line, sourceMatch),
+        hoverMessage: "Data Source",
+      };
+      decorations.push(sourceDecoration);
+    }
+  }
+
+  editor.setDecorations(flatDecoration, decorations);
 }
