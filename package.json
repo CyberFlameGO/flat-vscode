@@ -1,6 +1,7 @@
 {
   "name": "flat",
   "displayName": "flat",
+  "publisher": "GitHubOCTO",
   "description": "",
   "version": "0.0.1",
   "engines": {
