@@ -27,16 +27,10 @@ jobs:
     steps:
     - name: Check out repo
       uses: actions/checkout@v2
-    - name: Set up deno
-      run: |-
-        curl -fsSL https://deno.land/x/install/install.sh | sh
-        echo "$HOME/.deno/bin" >> $GITHUB_PATH
-    - name: Fetch latest Data
-      run: |-
-        curl "${params.source}" | jq . > data.json
-    - name: Postprocess
-      run: |-
-        deno run --allow-all postprocess.ts || exit 0
+    - name: Fetch data
+      uses: githubocto/flat-action@v1
+      with:
+        url: "${params.source}"
     - name: Commit and push if changed
       run: |-
         git config user.name "Flat"
