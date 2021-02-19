@@ -81,6 +81,22 @@ function createSQLAction(context: vscode.ExtensionContext) {
     }
   );
 
+  // Local path to css styles
+  const styleResetPath = vscode.Uri.joinPath(
+    context.extensionUri,
+    "media",
+    "reset.css"
+  );
+  const stylesPathMainPath = vscode.Uri.joinPath(
+    context.extensionUri,
+    "media",
+    "vscode.css"
+  );
+
+  // Uri to load styles into webview
+  const stylesResetUri = panel.webview.asWebviewUri(styleResetPath);
+  const stylesMainUri = panel.webview.asWebviewUri(stylesPathMainPath);
+
   const scriptPathOnDisk = vscode.Uri.joinPath(
     context.extensionUri,
     "media",
@@ -99,12 +115,14 @@ function createSQLAction(context: vscode.ExtensionContext) {
 					Use a content security policy to only allow loading images from https or from our extension directory,
 					and only allow scripts that have a specific nonce.
 				-->
-				<meta http-equiv="Content-Security-Policy" content="default-src 'none'; style-src ${panel.webview.cspSource}; img-src ${panel.webview.cspSource} https:; script-src 'nonce-${nonce}';">
+				<meta http-equiv="Content-Security-Policy" content="default-src 'none'; style-src https://unpkg.com ${panel.webview.cspSource}; img-src ${panel.webview.cspSource} https:; script-src 'nonce-${nonce}';">
 				<meta name="viewport" content="width=device-width, initial-scale=1.0">
-				<title>Cat Coding</title>
+				<title>SQL: Database Connection Info</title>
+        <link href="${stylesResetUri}" rel="stylesheet">
+				<link href="${stylesMainUri}" rel="stylesheet">
 			</head>
 			<body>
-				<div>sup</div>
+				<div id="app"></div>
 				<script nonce="${nonce}" src="${scriptUri}"></script>
 			</body>
 			</html>`;
