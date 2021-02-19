@@ -1,5 +1,6 @@
 import * as vscode from "vscode";
 import cronstrue from "cronstrue";
+import { createConnection } from "typeorm";
 
 import { buildVirtualDocument, isValidUrl, getNonce } from "../lib";
 
@@ -79,6 +80,45 @@ function createSQLAction(context: vscode.ExtensionContext) {
       enableScripts: true,
       localResourceRoots: [vscode.Uri.joinPath(context.extensionUri, "media")],
     }
+  );
+
+  panel.webview.onDidReceiveMessage(
+    async (message) => {
+      switch (message.command) {
+        case "test-connection":
+          const { payload } = message;
+          const { values } = payload;
+          try {
+            console.info("Attempting to connect to database...", values);
+
+            const connection = await createConnection({
+              type: values.protocol,
+              host: values.host,
+              port: values.port,
+              username: values.user,
+              password: values.password,
+              database: values.database,
+            });
+            panel.webview.postMessage({
+              command: "test-connection-success",
+              payload: {
+                connection,
+              },
+            });
+            return;
+          } catch (e) {
+            panel.webview.postMessage({
+              command: "test-connection-failure",
+              payload: {
+                error: e.message,
+              },
+            });
+            return;
+          }
+      }
+    },
+    undefined,
+    context.subscriptions
   );
 
   // Local path to css styles

@@ -11,14 +11,21 @@ export function App() {
   const [parsedConnString, setParsedConnString] = React.useState();
 
   const handleParseString = () => {
-    const parsed = new ConnectionString(connString);
-    setParsedConnString({
-      protocol: parsed.protocol,
-      user: parsed.user,
-      password: parsed.password,
-      host: parsed.host,
-      port: parsed.port,
-    });
+    try {
+      const parsed = new ConnectionString(connString);
+      console.info("Parsed the following values", parsed);
+
+      setParsedConnString({
+        protocol: parsed.protocol,
+        user: parsed.user,
+        password: parsed.password,
+        host: parsed.hostname,
+        port: parsed.port,
+        database: parsed?.path[0] || "",
+      });
+    } catch (e) {
+      console.error(e);
+    }
   };
 
   return (
