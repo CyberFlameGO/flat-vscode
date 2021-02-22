@@ -98,12 +98,18 @@ function createSQLAction(context: vscode.ExtensionContext) {
               username: values.user,
               password: values.password,
               database: values.database,
+              // LOL, OK
+              // https://github.com/typeorm/typeorm/issues/278#issuecomment-614345011
+              ssl: true,
+              extra: {
+                ssl: {
+                  rejectUnauthorized: false,
+                },
+              },
             });
+
             panel.webview.postMessage({
               command: "test-connection-success",
-              payload: {
-                connection,
-              },
             });
             return;
           } catch (e) {
@@ -122,20 +128,13 @@ function createSQLAction(context: vscode.ExtensionContext) {
   );
 
   // Local path to css styles
-  const styleResetPath = vscode.Uri.joinPath(
+  const stylesPath = vscode.Uri.joinPath(
     context.extensionUri,
     "media",
-    "reset.css"
-  );
-  const stylesPathMainPath = vscode.Uri.joinPath(
-    context.extensionUri,
-    "media",
-    "vscode.css"
+    "index.css"
   );
 
-  // Uri to load styles into webview
-  const stylesResetUri = panel.webview.asWebviewUri(styleResetPath);
-  const stylesMainUri = panel.webview.asWebviewUri(stylesPathMainPath);
+  const stylesUri = panel.webview.asWebviewUri(stylesPath);
 
   const scriptPathOnDisk = vscode.Uri.joinPath(
     context.extensionUri,
@@ -155,11 +154,10 @@ function createSQLAction(context: vscode.ExtensionContext) {
 					Use a content security policy to only allow loading images from https or from our extension directory,
 					and only allow scripts that have a specific nonce.
 				-->
-				<meta http-equiv="Content-Security-Policy" content="default-src 'none'; style-src https://unpkg.com ${panel.webview.cspSource}; img-src ${panel.webview.cspSource} https:; script-src 'nonce-${nonce}';">
+				<meta http-equiv="Content-Security-Policy" content="default-src 'none'; style-src https://unpkg.com ${panel.webview.cspSource}; img-src ${panel.webview.cspSource} 'self' data: https:; script-src 'nonce-${nonce}';">
 				<meta name="viewport" content="width=device-width, initial-scale=1.0">
 				<title>SQL: Database Connection Info</title>
-        <link href="${stylesResetUri}" rel="stylesheet">
-				<link href="${stylesMainUri}" rel="stylesheet">
+        <link href="${stylesUri}" rel="stylesheet">
 			</head>
 			<body>
 				<div id="app"></div>
@@ -170,6 +168,15 @@ function createSQLAction(context: vscode.ExtensionContext) {
 
 interface ActionItem extends vscode.QuickPickItem {
   value: string;
+}
+
+async function test(context: vscode.ExtensionContext) {
+  const document = await vscode.workspace.openTextDocument({
+    language: "sql",
+    content: "SELECT * from shutup",
+  });
+
+  await vscode.window.showTextDocument(document);
 }
 
 export const createAction = async (context: vscode.ExtensionContext) => {
@@ -200,6 +207,7 @@ export const createAction = async (context: vscode.ExtensionContext) => {
           break;
         case "sql":
           createSQLAction(context);
+          // test(context);
           break;
         default:
           break;

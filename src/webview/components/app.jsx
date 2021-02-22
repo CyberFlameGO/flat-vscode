@@ -4,7 +4,7 @@ import { ConnectionString } from "connection-string";
 import { ConnectionStringFormik } from "./connection-string-formik";
 
 const STUB_CONN_STRING =
-  "protocol://user:password@host1:123,[abcd::]:456/one/two?p1=val1&msg=hello+world!";
+  "postgres://abpgdbkqadfusn:9fd749957378141f616a01328ade277ef88f5bd6feb09443f5c139a4b3a88ad6@ec2-54-221-221-153.compute-1.amazonaws.com:5432/d2h501tj836d0v";
 
 export function App() {
   const [connString, setConnString] = React.useState(STUB_CONN_STRING);
@@ -29,33 +29,33 @@ export function App() {
   };
 
   return (
-    <div className="p-4">
-      <div className="space-y-4">
-        <section id="conn-string-input">
-          <div className="flex space-x-2">
-            <input
-              className="bg-white text-sm px-2 text-black block w-full h-8"
-              value={connString}
-              placeholder="Enter database connection string..."
-              onChange={(e) => setConnString(e.target.value)}
-            />
-            <div className="flex-shrink-0">
-              <button
-                className="bg-blue-600 text-white h-full px-4 h-8"
-                onClick={handleParseString}
-              >
-                Parse Connection String
-              </button>
-            </div>
+    <div>
+      <section
+        className="bg-gray-100 border-b border-gray-200 p-4"
+        id="conn-string-input"
+      >
+        <div className="flex space-x-2">
+          <input
+            className="shadow-sm focus:ring-indigo-500 focus:border-indigo-500 block w-full sm:text-sm border-gray-300 rounded-md text-gray-900 p-2"
+            value={connString}
+            placeholder="Enter database connection string..."
+            onChange={(e) => setConnString(e.target.value)}
+          />
+          <div className="flex-shrink-0">
+            <button
+              className="bg-blue-600 text-white h-full px-4 h-8"
+              onClick={handleParseString}
+            >
+              Parse Connection String
+            </button>
           </div>
+        </div>
+      </section>
+      {parsedConnString && (
+        <section className="p-4" id="conn-string-form">
+          <ConnectionStringFormik initialValues={parsedConnString} />
         </section>
-        <hr className="bg-gray-100" />
-        {parsedConnString && (
-          <section id="conn-string-form">
-            <ConnectionStringFormik initialValues={parsedConnString} />
-          </section>
-        )}
-      </div>
+      )}
     </div>
   );
 }

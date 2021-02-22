@@ -1,5 +1,5 @@
 import React from "react";
-import { Formik, Form, Field, ErrorMessage } from "formik";
+import { Formik, Form } from "formik";
 import * as yup from "yup";
 
 import { getVsCodeApi } from "../lib";
@@ -9,6 +9,7 @@ import {
   TEST_CONNECTION_SUCCESS,
 } from "../constants";
 import { useEvent } from "react-use";
+import { InputGroup } from "./input-group";
 
 const validationSchema = yup.object().shape({
   protocol: yup.string().required("Please enter a protocol"),
@@ -21,11 +22,14 @@ const validationSchema = yup.object().shape({
 
 const vscode = getVsCodeApi();
 
-function ConnectionStringFormComponent({ values }) {
+function ConnectionStringFormComponent({ values, envVarMap, onEnvVarChange }) {
+  const [testSuccess, setTestSuccess] = React.useState(false);
   const [testingError, setTestingError] = React.useState();
   const [testingStatus, setTestingStatus] = React.useState("idle");
 
   const handleTestConnection = async () => {
+    setTestSuccess(false);
+    setTestingError(undefined);
     setTestingStatus("loading");
 
     vscode.postMessage({
@@ -39,11 +43,11 @@ function ConnectionStringFormComponent({ values }) {
   const onMessage = React.useCallback((event) => {
     const message = event.data;
     const { command, payload } = message;
-    console.log({ payload });
 
     switch (command) {
       case TEST_CONNECTION_SUCCESS:
         setTestingStatus("idle");
+        setTestSuccess(true);
       case TEST_CONNECTION_FAILURE:
         setTestingError(payload.error);
         setTestingStatus("idle");
@@ -55,83 +59,61 @@ function ConnectionStringFormComponent({ values }) {
   return (
     <div className="space-y-4">
       {testingError && (
-        <div className="bg-red-100 text-red-700 p-4 border border-red-200">
-          {JSON.stringify(testingError, null, 2)}
+        <div className="bg-red-100 text-red-700 p-4 border border-red-200 rounded">
+          {testingError}
+        </div>
+      )}
+      {testSuccess && (
+        <div className="bg-green-100 text-green-700 p-4 border border-green-200 rounded">
+          Successfully tested your connection credentials!
         </div>
       )}
       <Form className="space-y-4 flex flex-col">
-        <div className="space-y-1">
-          <Field
+        <div>
+          <InputGroup
+            label="Protocol"
             name="protocol"
-            className="h-8 px-2 text-sm block text-black w-full"
-            placeholder="Protocol"
+            placeholder="Enter protocol"
+            isUsingEnvVar={envVarMap["protocol"]}
+            onToggle={onEnvVarChange}
           />
-          <ErrorMessage
-            component="p"
-            className="text-sm text-red-600"
-            name="protocol"
-          />
+          {envVarMap["protocol"] && <div className="my-4">YO</div>}
         </div>
-        <div className="space-y-1">
-          <Field
-            name="host"
-            className="h-8 px-2 text-sm block text-black w-full"
-            placeholder="Host"
-          />
-          <ErrorMessage
-            component="p"
-            className="text-sm text-red-600"
-            name="host"
-          />
-        </div>
-        <div className="space-y-1">
-          <Field
-            name="port"
-            className="h-8 px-2 text-sm block text-black w-full"
-            placeholder="Port "
-          />
-          <ErrorMessage
-            component="p"
-            className="text-sm text-red-600"
-            name="port"
-          />
-        </div>
-        <div className="space-y-1">
-          <Field
-            name="user"
-            className="h-8 px-2 text-sm block text-black w-full"
-            placeholder="Username"
-          />
-          <ErrorMessage
-            component="p"
-            className="text-sm text-red-600"
-            name="user"
-          />
-        </div>
-        <div className="space-y-1">
-          <Field
-            name="password"
-            className="h-8 px-2 text-sm block text-black w-full"
-            placeholder="Password"
-          />
-          <ErrorMessage
-            component="p"
-            className="text-sm text-red-600"
-            name="password"
-          />
-        </div>
-        <div className="space-y-1">
-          <Field
-            name="database"
-            className="h-8 px-2 text-sm block text-black w-full"
-            placeholder="Database"
-          />
-          <ErrorMessage
-            component="p"
-            className="text-sm text-red-600"
-            name="database"
-          />
-        </div>
+        <InputGroup
+          label="Host"
+          name="host"
+          placeholder="Enter host"
+          isUsingEnvVar={envVarMap["host"]}
+          onToggle={onEnvVarChange}
+        />
+        <InputGroup
+          label="Port"
+          name="port"
+          placeholder="Enter port"
+          isUsingEnvVar={envVarMap["port"]}
+          onToggle={onEnvVarChange}
+        />
+        <InputGroup
+          label="Username"
+          name="user"
+          placeholder="Enter username"
+          isUsingEnvVar={envVarMap["user"]}
+          onToggle={onEnvVarChange}
+        />
+        <InputGroup
+          label="Password"
+          name="password"
+          isUsingEnvVar={envVarMap["password"]}
+          placeholder="Enter password"
+          onToggle={onEnvVarChange}
+        />
+        <InputGroup
+          label="Database name"
+          name="database"
+          placeholder="Enter database name"
+          isUsingEnvVar={envVarMap["database"]}
+          onToggle={onEnvVarChange}
+        />
         <div className="flex space-x-4">
           <button
             type="submit"
@@ -155,6 +137,24 @@ function ConnectionStringFormComponent({ values }) {
 }
 
 export function ConnectionStringFormik({ initialValues, onSubmit }) {
+  const [envVarMap, setEnvVarMap] = React.useState(
+    Object.keys(initialValues).reduce((acc, next) => {
+      acc[next] = false;
+      return acc;
+    }, {})
+  );
+
+  const handleEnvVarChange = React.useCallback((envVar) => {
+    setEnvVarMap((curr) => {
+      return {
+        ...curr,
+        [envVar]: !curr[envVar],
+      };
+    });
+  });
+
+  // TODO: Use OctoKit to set secret values on the repo???
+
   return (
     <Formik
       validationSchema={validationSchema}
@@ -162,7 +162,13 @@ export function ConnectionStringFormik({ initialValues, onSubmit }) {
       validateOnChange={false}
       initialValues={initialValues}
       onSubmit={onSubmit}
-      component={ConnectionStringFormComponent}
+      children={(props) => (
+        <ConnectionStringFormComponent
+          {...props}
+          envVarMap={envVarMap}
+          onEnvVarChange={handleEnvVarChange}
+        />
+      )}
     />
   );
 }
