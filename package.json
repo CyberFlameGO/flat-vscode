@@ -32,6 +32,10 @@
       {
         "command": "flat.saveAndCommit",
         "title": "Save and Commit Action"
+      },
+      {
+        "command": "flat.authWithGithub",
+        "title": "Auth with GitHub"
       }
     ],
     "views": {

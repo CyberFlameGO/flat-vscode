@@ -1,10 +1,23 @@
 import * as vscode from "vscode";
 
 import { FlatProvider } from "./providers/flat";
-import { createAction, saveAndCommit } from "./commands";
+import { authWithGitHub, createAction, saveAndCommit } from "./commands";
+import { Credentials } from "./credentials";
 
 export async function activate(context: vscode.ExtensionContext) {
   const scheme = "flat";
+
+  const credentials = new Credentials();
+  await credentials.initialize(context);
+
+  const octokit = await credentials.getOctokit();
+
+  context.subscriptions.push(
+    vscode.commands.registerCommand(
+      "flat.authWithGithub",
+      async () => await authWithGitHub(octokit)
+    )
+  );
 
   context.subscriptions.push(
     vscode.workspace.registerTextDocumentContentProvider(
