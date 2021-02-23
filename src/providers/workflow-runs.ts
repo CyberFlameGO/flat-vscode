@@ -9,7 +9,6 @@ type listWorkflowRunsResponse = Endpoints["GET /repos/{owner}/{repo}/actions/run
 type listWorkflowJobsResponse = Endpoints["GET /repos/{owner}/{repo}/actions/runs/{run_id}/jobs"]["response"];
 
 type WorkflowRun = listWorkflowRunsResponse["data"]["workflow_runs"][0];
-type Job = listWorkflowJobsResponse["data"]["jobs"][0];
 type Step = listWorkflowJobsResponse["data"]["jobs"][0]["steps"][0];
 
 function makeWorkflowLabel(run: WorkflowRun) {
@@ -83,13 +82,11 @@ export class WorkflowRunsProvider
     this.octokit = octokit;
   }
 
-  getTreeItem(element: WorkflowRunItem) {
+  getTreeItem(element: WorkflowRunItem | StepItem) {
     return element;
   }
 
-  async getChildren(
-    element?: WorkflowRunItem
-  ): Promise<StepItem[] | WorkflowRunItem[]> {
+  async getChildren(element?: WorkflowRunItem) {
     const gitClient = new VSCodeGit();
     await gitClient.activateExtension();
 
