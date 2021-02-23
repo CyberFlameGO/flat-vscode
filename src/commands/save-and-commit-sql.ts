@@ -1,31 +1,51 @@
 import * as vscode from "vscode";
-import { Octokit } from "@octokit/rest";
 import * as path from "path";
 import * as fs from "fs";
 
 import { encryptSecret, VSCodeGit } from "../lib";
 import store from "../store";
+import { Credentials } from "../credentials";
 
-export async function saveAndCommitSql(octokit: Octokit) {
+export async function saveAndCommitSql(context: vscode.ExtensionContext) {
+  // Global state
   const { getState } = store;
   const { connectionString, reset } = getState();
+
   const gitClient = new VSCodeGit();
 
+  // Let's auth with GitHub so that we can create secrets for the user.
+  const credentials = new Credentials();
+
+  try {
+    await credentials.initialize(context);
+  } catch (e) {
+    await vscode.window.showErrorMessage(
+      "Yikes! We need you to auth with GitHub in order to complete this workflow."
+    );
+    return;
+  }
+
+  // Phew, we made it. Let's get our Octokit instance.
+  const octokit = await credentials.getOctokit();
+
+  // Let's encrypt the user's connection string.
   const encryptedConnectionString = encryptSecret(connectionString);
 
+  // Then, let's get the current user's "owner" name
   const userInfo = await octokit.users.getAuthenticated();
   const owner = userInfo.data.login;
 
   if (!owner) {
-    await vscode.window.showErrorMessage("Hmm, we couldn't authenticate you.");
+    await vscode.window.showErrorMessage(
+      "Hmm, we couldn't seem to identify you!"
+    );
     return;
   }
 
+  // Next, let's grab the repo name.
   const repoName = gitClient.repoName;
 
-  /*
-    <SECRET_CREATION>
-  */
+  // Go time! Let's create a secret for the encrpyted conn string.
   const keyRes = await octokit.actions.getRepoPublicKey({
     owner,
     repo: repoName,
@@ -34,7 +54,7 @@ export async function saveAndCommitSql(octokit: Octokit) {
   const keyId = keyRes.data.key_id;
 
   try {
-    const res = await octokit.actions.createOrUpdateRepoSecret({
+    await octokit.actions.createOrUpdateRepoSecret({
       owner: owner,
       repo: repoName,
       secret_name: "connstring",
@@ -42,15 +62,12 @@ export async function saveAndCommitSql(octokit: Octokit) {
       key_id: keyId,
     });
   } catch (e) {
-    throw new Error("Failed to create secrets");
+    await vscode.window.showErrorMessage(
+      "Oh no! We weren't able to create a secret for your connection string."
+    );
   }
-  /*
-    </SECRET_CREATION>
-  */
 
-  /*
-    <YAML_COMMIT>
-  */
+  // In any event, let's go ahead and commit the YAML.
   const editor = vscode.window.activeTextEditor;
 
   if (!editor) {
@@ -61,14 +78,15 @@ export async function saveAndCommitSql(octokit: Octokit) {
   const action = document.getText();
 
   const folders = vscode.workspace.workspaceFolders;
+
   if (!folders) {
     return;
   }
 
   let rootPath: vscode.WorkspaceFolder;
-
-  // Write yaml to disk.
   rootPath = folders[0];
+
+  // Write file
   const workflowsDir = path.join(rootPath.uri.path, ".github/workflows");
   fs.mkdirSync(workflowsDir, { recursive: true });
   fs.writeFileSync(path.join(workflowsDir, "flat.yaml"), action);
@@ -76,20 +94,16 @@ export async function saveAndCommitSql(octokit: Octokit) {
   // Add and commit.
   await gitClient.add([vscode.Uri.parse(path.join(workflowsDir, "flat.yaml"))]);
   await gitClient.commit("feat: add flat.yaml workflow");
-
   await vscode.commands.executeCommand("workbench.action.closeActiveEditor");
 
   vscode.window.showInformationMessage(
     "Created and committed flat.yml 🎊! Write your SQL query."
   );
-  /*
-    </YAML_COMMIT>
-  */
 
+  // Write SQL file
   const sqlPath = path.join(workflowsDir, "query.sql");
 
   fs.writeFileSync(sqlPath, "");
-  console.log(sqlPath, vscode.Uri.parse(sqlPath));
 
   const sqlDocument = await vscode.workspace.openTextDocument(
     vscode.Uri.parse(sqlPath)
@@ -97,6 +111,6 @@ export async function saveAndCommitSql(octokit: Octokit) {
 
   await vscode.window.showTextDocument(sqlDocument);
 
-  // Reset Zustand state
+  // Reset Zustand state so subsequent extension runs don't blow up.
   reset();
 }

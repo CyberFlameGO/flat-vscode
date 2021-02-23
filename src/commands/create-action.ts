@@ -115,7 +115,7 @@ async function createSQLAction() {
           }
 
           // @ts-ignore
-          await createConnection({
+          const connection = await createConnection({
             type: protocol,
             url: connStringInputBox.value,
             ssl: true,
@@ -125,6 +125,8 @@ async function createSQLAction() {
               },
             },
           });
+
+          await connection.close();
 
           connStringInputBox.hide();
 
