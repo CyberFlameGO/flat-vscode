@@ -11,6 +11,7 @@ export async function saveAndCommitSql() {
   const { connectionString, reset, octokit } = store.getState();
 
   const gitClient = new VSCodeGit();
+  await gitClient.activateExtension();
 
   if (!octokit) {
     authWithGithub();

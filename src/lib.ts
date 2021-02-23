@@ -77,11 +77,8 @@ export class VSCodeGit {
     if (!gitExtension) {
       throw new Error("Git extension not found");
     }
-    this.extension = gitExtension;
 
-    if (!this.extension.isActive) {
-      this.activateExtension();
-    }
+    this.extension = gitExtension;
   }
 
   async activateExtension() {

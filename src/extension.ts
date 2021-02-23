@@ -1,17 +1,27 @@
 import * as vscode from "vscode";
 
-import { FlatProvider } from "./providers/flat";
+import { WorkflowRunsProvider, FlatProvider } from "./providers";
 import {
   createAction,
   saveAndCommit,
   saveAndCommitSql,
   authWithGithub,
 } from "./commands";
+import store from "./store";
 
 export async function activate(context: vscode.ExtensionContext) {
   const scheme = "flat";
 
   await authWithGithub();
+
+  const { octokit } = store.getState();
+
+  if (octokit) {
+    vscode.window.registerTreeDataProvider(
+      "workflowRuns",
+      new WorkflowRunsProvider(octokit)
+    );
+  }
 
   context.subscriptions.push(
     vscode.commands.registerCommand("flat.saveAndCommitSql", saveAndCommitSql)

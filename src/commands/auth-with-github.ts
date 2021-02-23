@@ -5,7 +5,7 @@ import { getSession } from "../lib";
 import store from "../store";
 
 export async function authWithGithub() {
-  const { setOctokit } = store.getState();
+  const { setOctokit, octokit } = store.getState();
   // Check if there's an existing session
   const session = await getSession({ createIfNone: false });
 

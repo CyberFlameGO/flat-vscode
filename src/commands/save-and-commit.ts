@@ -7,6 +7,7 @@ import { VSCodeGit } from "../lib";
 export const saveAndCommit = async () => {
   // Initialize git client.
   const gitClient = new VSCodeGit();
+  await gitClient.activateExtension();
 
   // Check if we're in a repo. Bail if not.
   const repo = gitClient.repository;
