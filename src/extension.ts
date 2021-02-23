@@ -1,7 +1,12 @@
 import * as vscode from "vscode";
 
 import { FlatProvider } from "./providers/flat";
-import { authWithGitHub, createAction, saveAndCommit } from "./commands";
+import {
+  authWithGitHub,
+  createAction,
+  saveAndCommit,
+  saveAndCommitSql,
+} from "./commands";
 import { Credentials } from "./credentials";
 
 export async function activate(context: vscode.ExtensionContext) {
@@ -11,6 +16,13 @@ export async function activate(context: vscode.ExtensionContext) {
   await credentials.initialize(context);
 
   const octokit = await credentials.getOctokit();
+
+  context.subscriptions.push(
+    vscode.commands.registerCommand(
+      "flat.saveAndCommitSql",
+      async () => await saveAndCommitSql(octokit)
+    )
+  );
 
   context.subscriptions.push(
     vscode.commands.registerCommand(

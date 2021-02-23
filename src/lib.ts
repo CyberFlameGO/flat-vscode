@@ -1,17 +1,24 @@
 import * as vscode from "vscode";
-import { GitAPI } from "./types";
 import { URL } from "url";
+import { TextEncoder } from "util";
 
+import { GitAPI } from "./types";
 import { flatDecoration } from "./decorations";
 
+const GitUrlParse = require("git-url-parse");
+const nacl = require("tweetnacl");
+const sodium = require("tweetsodium");
+
 interface ActionParams {
-  name: string;
-  cron: string;
-  source: string;
+  type?: string;
+  name?: string;
+  cron?: string;
+  source?: string;
 }
 
 export function makeActionYaml(params: ActionParams) {
-  return `name: ${params.name}
+  const { name, cron, type, source } = params;
+  return `name: ${name}
 
 on:
   push:
@@ -19,7 +26,7 @@ on:
       - main
   workflow_dispatch:
   schedule:
-    - cron: '${params.cron}'
+    - cron: '${cron}'
   
 jobs:
   scheduled:
@@ -30,7 +37,22 @@ jobs:
     - name: Fetch data
       uses: githubocto/flat-action@v1
       with:
-        url: "${params.source}"
+        ${type === "html" ? `url: '${source}'` : ""}
+        ${
+          type === "sql"
+            ? `
+        # We'll upload an encrypted version of your connection string as a secret
+        connstring: \${{ secrets.connstring }}
+        `
+            : "\n"
+        }
+        ${
+          type === "sql"
+            ? `
+      # After hitting "Save and Commit Action", you'll be prompted to write your SQL query.
+        queryfile: query.sql`
+            : "\n"
+        }
     - name: Commit and push if changed
       run: |-
         git config user.name "Flat"
@@ -39,7 +61,7 @@ jobs:
         timestamp=$(date -u)
         git commit -m "Latest data: \${timestamp}" || exit 0
         git push
-`;
+`.replace(/^\s*[\r\n]/gm, "");
 }
 
 interface GitExtension {
@@ -69,6 +91,19 @@ export class VSCodeGit {
   get rawGit() {
     // Unsure about this magic number, but it works.
     return this.extension.exports.getAPI(1);
+  }
+
+  get repoName() {
+    const remotes = this.repository._repository.remotes;
+    if (remotes.length === 0) {
+      throw new Error(
+        "No remotes found. Are you sure you've created an upstream repo?"
+      );
+    }
+
+    const remote = remotes[0];
+    const parsed = GitUrlParse(remote.pushUrl);
+    return parsed.name;
   }
 
   get repository() {
@@ -125,17 +160,17 @@ export function isValidUrl(input: string) {
   return url.protocol === "http:" || url.protocol === "https:";
 }
 
-interface BuildVirtualDocumentParams {
+interface BuildHtmlYamlParams {
   name: string;
   cron: string;
   source: string;
 }
 
-export async function buildVirtualDocument(params: BuildVirtualDocumentParams) {
+export async function buildHtmlYaml(params: BuildHtmlYamlParams) {
   const { name, source, cron } = params;
 
   const uri = vscode.Uri.parse(
-    `flat:/schedule.yaml?name=${name}&cron=${cron}&source=${source}`
+    `flat:/schedule.yaml?name=${name}&cron=${cron}&source=${source}&type=html`
   );
   let doc = await vscode.workspace.openTextDocument(uri);
   await vscode.window.showTextDocument(doc, { preview: false });
@@ -185,4 +220,30 @@ export async function buildVirtualDocument(params: BuildVirtualDocumentParams) {
   }
 
   editor.setDecorations(flatDecoration, decorations);
+}
+
+interface BuildSqlYamlParams {
+  cron: string;
+  name: string;
+}
+
+export async function buildSqlYaml(params: BuildSqlYamlParams) {
+  const { cron, name } = params;
+
+  const uri = vscode.Uri.parse(
+    `flat:/schedule.yaml?name=${name}&cron=${cron}&type=sql`
+  );
+  let doc = await vscode.workspace.openTextDocument(uri);
+  await vscode.window.showTextDocument(doc, { preview: false });
+}
+
+export function encryptSecret(value: string) {
+  // generate public key to use for encryption and coresponding secret key to use
+  // for decryption
+  const keyPair = nacl.box.keyPair();
+  const encoder = new TextEncoder();
+  const messageBytes = encoder.encode(value);
+
+  const encryptedBytes = sodium.seal(messageBytes, keyPair.publicKey);
+  return Buffer.from(encryptedBytes).toString("base64");
 }

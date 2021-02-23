@@ -9,9 +9,10 @@ export const FlatProvider = class
     const parsed = parse(uri.query);
 
     return makeActionYaml({
-      name: (parsed.name as string) || "Please provide a name",
-      cron: (parsed.cron as string) || "Please provide a cron schedule",
-      source: (parsed.source as string) || "Please provide a cron source",
+      type: parsed.type as string,
+      name: parsed.name as string,
+      cron: parsed.cron as string,
+      source: parsed.source as string,
     });
   }
 };

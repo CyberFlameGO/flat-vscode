@@ -21,7 +21,15 @@ export interface Change {
   readonly uri: vscode.Uri;
 }
 
+export interface Remote {
+  fetchUrl: string;
+  isReadOnly: boolean;
+  name: string;
+  pushUrl: string;
+}
+
 export interface RawRepository {
+  remotes: Remote[];
   add(resources: vscode.Uri[]): Promise<void>;
   commit(message: string): Promise<void>;
   createBranch(name: string, checkout: boolean, ref?: string): Promise<void>;
