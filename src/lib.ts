@@ -93,7 +93,7 @@ export class VSCodeGit {
     return this.extension.exports.getAPI(1);
   }
 
-  get repoName() {
+  get repoDetails() {
     const remotes = this.repository._repository.remotes;
     if (remotes.length === 0) {
       throw new Error(
@@ -103,7 +103,10 @@ export class VSCodeGit {
 
     const remote = remotes[0];
     const parsed = GitUrlParse(remote.pushUrl);
-    return parsed.name;
+    return {
+      name: parsed.name,
+      owner: parsed.owner,
+    };
   }
 
   get repository() {
@@ -246,4 +249,18 @@ export function encryptSecret(value: string) {
 
   const encryptedBytes = sodium.seal(messageBytes, keyPair.publicKey);
   return Buffer.from(encryptedBytes).toString("base64");
+}
+
+interface GetSessionParams {
+  createIfNone: boolean;
+}
+
+const GITHUB_AUTH_PROVIDER_ID = "github";
+const SCOPES = ["user:email", "repo"];
+
+export function getSession(params: GetSessionParams) {
+  const { createIfNone } = params;
+  return vscode.authentication.getSession(GITHUB_AUTH_PROVIDER_ID, SCOPES, {
+    createIfNone,
+  });
 }

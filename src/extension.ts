@@ -1,15 +1,20 @@
 import * as vscode from "vscode";
 
 import { FlatProvider } from "./providers/flat";
-import { createAction, saveAndCommit, saveAndCommitSql } from "./commands";
+import {
+  createAction,
+  saveAndCommit,
+  saveAndCommitSql,
+  authWithGithub,
+} from "./commands";
 
 export async function activate(context: vscode.ExtensionContext) {
   const scheme = "flat";
 
+  await authWithGithub();
+
   context.subscriptions.push(
-    vscode.commands.registerCommand("flat.saveAndCommitSql", () =>
-      saveAndCommitSql(context)
-    )
+    vscode.commands.registerCommand("flat.saveAndCommitSql", saveAndCommitSql)
   );
 
   context.subscriptions.push(

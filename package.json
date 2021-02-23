@@ -46,9 +46,10 @@
     "views": {
       "explorer": [
         {
-          "id": "repositories",
-          "name": "Repositories",
-          "contextualTitle": "Repositories"
+          "id": "workflowRuns",
+          "name": "Workflow Runs",
+          "contextualTitle": "Flat: Workflow Runs",
+          "when": "flat:authedWithGithub == true"
         }
       ]
     }

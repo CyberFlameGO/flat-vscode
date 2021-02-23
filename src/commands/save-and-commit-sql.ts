@@ -4,51 +4,29 @@ import * as fs from "fs";
 
 import { encryptSecret, VSCodeGit } from "../lib";
 import store from "../store";
-import { Credentials } from "../credentials";
+import { authWithGithub } from "./auth-with-github";
 
-export async function saveAndCommitSql(context: vscode.ExtensionContext) {
+export async function saveAndCommitSql() {
   // Global state
-  const { getState } = store;
-  const { connectionString, reset } = getState();
+  const { connectionString, reset, octokit } = store.getState();
 
   const gitClient = new VSCodeGit();
 
-  // Let's auth with GitHub so that we can create secrets for the user.
-  const credentials = new Credentials();
-
-  try {
-    await credentials.initialize(context);
-  } catch (e) {
-    await vscode.window.showErrorMessage(
-      "Yikes! We need you to auth with GitHub in order to complete this workflow."
-    );
+  if (!octokit) {
+    authWithGithub();
     return;
   }
-
-  // Phew, we made it. Let's get our Octokit instance.
-  const octokit = await credentials.getOctokit();
 
   // Let's encrypt the user's connection string.
   const encryptedConnectionString = encryptSecret(connectionString);
 
-  // Then, let's get the current user's "owner" name
-  const userInfo = await octokit.users.getAuthenticated();
-  const owner = userInfo.data.login;
-
-  if (!owner) {
-    await vscode.window.showErrorMessage(
-      "Hmm, we couldn't seem to identify you!"
-    );
-    return;
-  }
-
   // Next, let's grab the repo name.
-  const repoName = gitClient.repoName;
+  const { name, owner } = gitClient.repoDetails;
 
   // Go time! Let's create a secret for the encrpyted conn string.
   const keyRes = await octokit.actions.getRepoPublicKey({
     owner,
-    repo: repoName,
+    repo: name,
   });
 
   const keyId = keyRes.data.key_id;
@@ -56,7 +34,7 @@ export async function saveAndCommitSql(context: vscode.ExtensionContext) {
   try {
     await octokit.actions.createOrUpdateRepoSecret({
       owner: owner,
-      repo: repoName,
+      repo: name,
       secret_name: "connstring",
       encrypted_value: encryptedConnectionString,
       key_id: keyId,
