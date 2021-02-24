@@ -1,6 +1,5 @@
 import * as vscode from "vscode";
 import { URL } from "url";
-import { TextEncoder } from "util";
 
 import { GitAPI } from "./types";
 import { flatDecoration } from "./decorations";
