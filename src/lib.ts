@@ -6,8 +6,6 @@ import { GitAPI } from "./types";
 import { flatDecoration } from "./decorations";
 
 const GitUrlParse = require("git-url-parse");
-const nacl = require("tweetnacl");
-const sodium = require("tweetsodium");
 
 interface ActionParams {
   type?: string;
@@ -42,7 +40,7 @@ jobs:
           type === "sql"
             ? `
         # We'll upload an encrypted version of your connection string as a secret
-        connstring: \${{ secrets.connstring }}
+        connstring: \${{ secrets.CONNSTRING }}
         `
             : "\n"
         }
@@ -235,17 +233,6 @@ export async function buildSqlYaml(params: BuildSqlYamlParams) {
   );
   let doc = await vscode.workspace.openTextDocument(uri);
   await vscode.window.showTextDocument(doc, { preview: false });
-}
-
-export function encryptSecret(value: string) {
-  // generate public key to use for encryption and coresponding secret key to use
-  // for decryption
-  const keyPair = nacl.box.keyPair();
-  const encoder = new TextEncoder();
-  const messageBytes = encoder.encode(value);
-
-  const encryptedBytes = sodium.seal(messageBytes, keyPair.publicKey);
-  return Buffer.from(encryptedBytes).toString("base64");
 }
 
 interface GetSessionParams {

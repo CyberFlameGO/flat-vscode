@@ -2,9 +2,11 @@ import * as vscode from "vscode";
 import * as path from "path";
 import * as fs from "fs";
 
-import { encryptSecret, VSCodeGit } from "../lib";
+import { VSCodeGit } from "../lib";
 import store from "../store";
 import { authWithGithub } from "./auth-with-github";
+
+const sodium = require("tweetsodium");
 
 export async function saveAndCommitSql() {
   // Global state
@@ -18,9 +20,6 @@ export async function saveAndCommitSql() {
     return;
   }
 
-  // Let's encrypt the user's connection string.
-  const encryptedConnectionString = encryptSecret(connectionString);
-
   // Next, let's grab the repo name.
   const { name, owner } = gitClient.repoDetails;
 
@@ -30,14 +29,26 @@ export async function saveAndCommitSql() {
     repo: name,
   });
 
+  const key = keyRes.data.key;
+
+  // Convert the message and key to Uint8Array's (Buffer implements that interface)
+  const messageBytes = Buffer.from(connectionString);
+  const keyBytes = Buffer.from(key, "base64");
+
+  // Encrypt using LibSodium.
+  const encryptedBytes = sodium.seal(messageBytes, keyBytes);
+
+  // Base64 the encrypted secret
+  const encrypted = Buffer.from(encryptedBytes).toString("base64");
+
   const keyId = keyRes.data.key_id;
 
   try {
     await octokit.actions.createOrUpdateRepoSecret({
       owner: owner,
       repo: name,
-      secret_name: "connstring",
-      encrypted_value: encryptedConnectionString,
+      secret_name: "CONNSTRING",
+      encrypted_value: encrypted,
       key_id: keyId,
     });
   } catch (e) {
