@@ -1,6 +1,10 @@
 import * as vscode from "vscode";
 
-import { WorkflowRunsProvider, FlatProvider } from "./providers";
+import {
+  WorkflowRunsProvider,
+  FlatProvider,
+  SidebarProvider,
+} from "./providers";
 import {
   createAction,
   saveAndCommit,
@@ -16,12 +20,18 @@ export async function activate(context: vscode.ExtensionContext) {
 
   const { octokit } = store.getState();
 
-  if (octokit) {
-    vscode.window.registerTreeDataProvider(
-      "workflowRuns",
-      new WorkflowRunsProvider(octokit)
-    );
-  }
+  const sidebarProvider = new SidebarProvider(context.extensionUri);
+
+  context.subscriptions.push(
+    vscode.window.registerWebviewViewProvider("flat-sidebar", sidebarProvider)
+  );
+
+  // if (octokit) {
+  //   vscode.window.registerTreeDataProvider(
+  //     "workflowRuns",
+  //     new WorkflowRunsProvider(octokit)
+  //   );
+  // }
 
   context.subscriptions.push(
     vscode.commands.registerCommand("flat.saveAndCommitSql", saveAndCommitSql)
