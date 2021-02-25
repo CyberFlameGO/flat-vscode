@@ -14,7 +14,7 @@ export function Auth() {
     <div className="p-4">
       <div className="space-y-4">
         <p>In order to use Flat, you need to authenticate with GitHub.</p>
-        <button onClick={handleAuth} className="btn">
+        <button onClick={handleAuth} className="btn btn-primary">
           Sign in with GitHub
         </button>
       </div>

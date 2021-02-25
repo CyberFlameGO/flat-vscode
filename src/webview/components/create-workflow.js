@@ -13,7 +13,7 @@ function Home() {
         <p className="text-xs opacity-50">
           I can read the data I want from a URL
         </p>
-        <Link className="btn w-full" to="/html">
+        <Link className="btn btn-primary w-full" to="/html">
           Create HTTP Action
         </Link>
       </div>
@@ -21,7 +21,7 @@ function Home() {
         <p className="text-xs opacity-50">
           I can read the data I want from a URL
         </p>
-        <Link className="btn w-full" to="/sql">
+        <Link className="btn btn-primary w-full" to="/sql">
           Create SQL Action
         </Link>
       </div>
