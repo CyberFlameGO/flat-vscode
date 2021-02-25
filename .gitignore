@@ -1,6 +1,7 @@
 out
 dist
 node_modules
+.parcel-cache
 .vscode-test/
 *.vsix
 yarn-error.log

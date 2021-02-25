@@ -1,4 +1,5 @@
 import * as vscode from "vscode";
+import { getNonce } from "../lib";
 
 export class SidebarProvider implements vscode.WebviewViewProvider {
   _view?: vscode.WebviewView;
@@ -10,7 +11,6 @@ export class SidebarProvider implements vscode.WebviewViewProvider {
     this._view = webviewView;
 
     webviewView.webview.options = {
-      // Allow scripts in the webview
       enableScripts: true,
       localResourceRoots: [this._extensionUri],
     };
@@ -28,14 +28,37 @@ export class SidebarProvider implements vscode.WebviewViewProvider {
   }
 
   private _getHtmlForWebview(webview: vscode.Webview) {
+    // Hydrate React app with data
+
+    const stylesPath = vscode.Uri.joinPath(
+      this._extensionUri,
+      "media",
+      "index.css"
+    );
+
+    const stylesUri = webview.asWebviewUri(stylesPath);
+
+    const scriptPathOnDisk = vscode.Uri.joinPath(
+      this._extensionUri,
+      "media",
+      "index.js"
+    );
+
+    const scriptUri = webview.asWebviewUri(scriptPathOnDisk);
+
+    const nonce = getNonce();
+
     return `<!DOCTYPE html>
 			<html lang="en">
 			<head>
-				<meta charset="UTF-8">
+				<meta charset="UTF-8">        
 				<meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <meta http-equiv="Content-Security-Policy" content="default-src 'none'; style-src ${webview.cspSource}; img-src ${webview.cspSource} 'self' data: https:; script-src 'nonce-${nonce}';">
+        <link href="${stylesUri}" rel="stylesheet">
 			</head>
       <body>
-				Hello world
+				<div id="app"></div>
+        <script nonce="${nonce}" src="${scriptUri}"></script>
 			</body>
 			</html>`;
   }
