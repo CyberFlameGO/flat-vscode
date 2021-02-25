@@ -10,6 +10,12 @@ export class SidebarProvider implements vscode.WebviewViewProvider {
 
   constructor(private readonly _extensionUri: vscode.Uri) {}
 
+  public async refresh() {
+    if (!this._view) return;
+
+    this._view.webview.html = await this._getHtmlForWebview(this._view.webview);
+  }
+
   public async resolveWebviewView(webviewView: vscode.WebviewView) {
     this._view = webviewView;
 
@@ -18,13 +24,20 @@ export class SidebarProvider implements vscode.WebviewViewProvider {
       localResourceRoots: [this._extensionUri],
     };
 
-    webviewView.webview.html = await this._getHtmlForWebview(
-      webviewView.webview
-    );
+    const updateWebview = async () => {
+      webviewView.webview.html = await this._getHtmlForWebview(
+        webviewView.webview
+      );
+    };
+
+    await updateWebview();
 
     webviewView.webview.onDidReceiveMessage(async (data) => {
-      // switch (data.type) {
-      // }
+      switch (data.command) {
+        case "auth-with-github":
+          await vscode.commands.executeCommand("flat.authWithGithub");
+          await updateWebview();
+      }
     });
   }
 
@@ -34,8 +47,13 @@ export class SidebarProvider implements vscode.WebviewViewProvider {
 
   private async _getHtmlForWebview(webview: vscode.Webview) {
     const gitClient = new VSCodeGit();
+
     await gitClient.activateExtension();
+
     const { sessionToken } = store.getState();
+    console.log("****** GETTING HTML *******");
+    console.log(sessionToken);
+    console.log("****** GETTING HTML*******");
 
     const stylesPath = vscode.Uri.joinPath(
       this._extensionUri,
@@ -55,8 +73,16 @@ export class SidebarProvider implements vscode.WebviewViewProvider {
 
     const nonce = getNonce();
 
-    // Next, let's grab the repo name.
-    const { name, owner } = gitClient.repoDetails;
+    let name = "",
+      owner = "";
+
+    try {
+      const details = gitClient.repoDetails;
+      name = details.name;
+      owner = details.owner;
+    } catch (e) {
+      console.error("no upstream, wtf?", e);
+    }
 
     const initialAppState = {
       sessionToken,

@@ -31,8 +31,7 @@
           "id": "flat-sidebar",
           "name": "Flat",
           "icon": "media/flat.svg",
-          "contextualTitle": "Flat",
-          "when": "flat:authedWithGithub == true"
+          "contextualTitle": "Flat"
         }
       ]
     },
@@ -111,6 +110,7 @@
     "react": "^17.0.1",
     "react-dom": "^17.0.1",
     "react-query": "^3.12.0",
+    "react-router-dom": "^5.2.0",
     "tweetsodium": "^0.0.5",
     "typeorm": "^0.2.31",
     "zustand": "^3.3.2"

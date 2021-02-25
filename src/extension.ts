@@ -1,16 +1,16 @@
 import * as vscode from "vscode";
 
-import { FlatProvider, SidebarProvider } from "./providers";
+import { SidebarProvider } from "./providers";
 import {
   createAction,
   saveAndCommit,
   saveAndCommitSql,
   authWithGithub,
 } from "./commands";
-
-const scheme = "flat";
+import store from "./store";
 
 export async function activate(context: vscode.ExtensionContext) {
+  const { reset } = store.getState();
   await authWithGithub();
 
   const sidebarProvider = new SidebarProvider(context.extensionUri);
@@ -24,14 +24,20 @@ export async function activate(context: vscode.ExtensionContext) {
   );
 
   context.subscriptions.push(
-    vscode.workspace.registerTextDocumentContentProvider(
-      scheme,
-      new FlatProvider()
-    )
+    vscode.authentication.onDidChangeSessions(async (e) => {
+      // We can probably assume that if you removed an identity and it was GitHub, it was you signing out
+      // @ts-ignore
+      if (e.removed.length > 0 && e.provider.id === "github") {
+        reset();
+        await sidebarProvider.refresh();
+      }
+    })
   );
 
   context.subscriptions.push(
-    vscode.commands.registerCommand("flat.authWithGithub", authWithGithub)
+    vscode.commands.registerCommand("flat.authWithGithub", () =>
+      authWithGithub(true)
+    )
   );
 
   context.subscriptions.push(

@@ -4,9 +4,8 @@ import * as vscode from "vscode";
 import { getSession } from "../lib";
 import store from "../store";
 
-export async function authWithGithub() {
+export async function authWithGithub(prompt = false) {
   const { setOctokit, setSessionToken } = store.getState();
-  // Check if there's an existing session
   const session = await getSession({ createIfNone: false });
 
   if (session) {
@@ -17,32 +16,21 @@ export async function authWithGithub() {
       })
     );
     vscode.commands.executeCommand("setContext", "flat:authedWithGithub", true);
-  } else {
-    const authPermisson = await vscode.window.showInformationMessage(
-      "In order to use Flat, you need to authenticate with GitHub",
-      {},
-      "Authenticate"
-    );
+  } else if (prompt) {
+    const session = await getSession({ createIfNone: true });
 
-    if (authPermisson === "Authenticate") {
-      const session = await getSession({ createIfNone: true });
-      if (session) {
-        setSessionToken(session.accessToken);
-        setOctokit(
-          new Octokit.Octokit({
-            auth: session.accessToken,
-          })
-        );
-        vscode.window.showInformationMessage("Authed successfully");
-        vscode.commands.executeCommand(
-          "setContext",
-          "flat:authedWithGithub",
-          true
-        );
-      }
-    } else {
-      vscode.window.showErrorMessage(
-        "You will not be able to take advantage of Flat until you auth with GitHub"
+    if (session) {
+      setSessionToken(session.accessToken);
+      setOctokit(
+        new Octokit.Octokit({
+          auth: session.accessToken,
+        })
+      );
+      vscode.window.showInformationMessage("Authed successfully");
+      vscode.commands.executeCommand(
+        "setContext",
+        "flat:authedWithGithub",
+        true
       );
     }
   }

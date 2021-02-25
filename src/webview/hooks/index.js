@@ -1,13 +1,12 @@
 import { useQuery } from "react-query";
-import { useStore } from "../store";
+import { getWorkflowRuns, getWorkflow } from "../api";
 
 export function useWorkflowRuns() {
-  const { octokit, repo } = useStore();
+  return useQuery("runs", getWorkflowRuns);
+}
 
-  return useQuery("runs", () =>
-    octokit.actions.listWorkflowRunsForRepo({
-      repo: repo.name,
-      owner: repo.owner,
-    })
-  );
+export function useWorkflow() {
+  return useQuery("workflow", getWorkflow, {
+    retry: false,
+  });
 }

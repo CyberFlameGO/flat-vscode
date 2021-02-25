@@ -23,7 +23,7 @@ const store = create<FlatStore>((set) => ({
     });
   },
   reset: () => {
-    set({ connectionString: "" });
+    set({ connectionString: "", sessionToken: "" });
   },
   sessionToken: "",
   setSessionToken: (sessionToken: string) => {
