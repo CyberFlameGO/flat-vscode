@@ -5,11 +5,12 @@ import { getSession } from "../lib";
 import store from "../store";
 
 export async function authWithGithub() {
-  const { setOctokit, octokit } = store.getState();
+  const { setOctokit, setSessionToken } = store.getState();
   // Check if there's an existing session
   const session = await getSession({ createIfNone: false });
 
   if (session) {
+    setSessionToken(session.accessToken);
     setOctokit(
       new Octokit.Octokit({
         auth: session.accessToken,
@@ -26,6 +27,7 @@ export async function authWithGithub() {
     if (authPermisson === "Authenticate") {
       const session = await getSession({ createIfNone: true });
       if (session) {
+        setSessionToken(session.accessToken);
         setOctokit(
           new Octokit.Octokit({
             auth: session.accessToken,

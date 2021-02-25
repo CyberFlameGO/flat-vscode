@@ -27,15 +27,11 @@ function calculateStepDirection(step: Step) {
   );
 }
 
-// https://github.com/codespaces-contrib/gitdoc/blob/4b01e2d119d703f029d9ad5c3e28c87a3d5ac74b/src/extension.ts#L26
-// TODO: Refactor via
 async function waitForRepo(
   gitClient: VSCodeGit
 ): Promise<{ name: string; owner: string }> {
   let name = "",
     owner = "";
-  // WARNING: HACK AHEAD!
-
   return new Promise((resolve) => {
     const checkRepoExists = setInterval(() => {
       const details = gitClient.repoDetails;

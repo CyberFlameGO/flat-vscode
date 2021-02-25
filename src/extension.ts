@@ -1,37 +1,23 @@
 import * as vscode from "vscode";
 
-import {
-  WorkflowRunsProvider,
-  FlatProvider,
-  SidebarProvider,
-} from "./providers";
+import { FlatProvider, SidebarProvider } from "./providers";
 import {
   createAction,
   saveAndCommit,
   saveAndCommitSql,
   authWithGithub,
 } from "./commands";
-import store from "./store";
+
+const scheme = "flat";
 
 export async function activate(context: vscode.ExtensionContext) {
-  const scheme = "flat";
-
   await authWithGithub();
-
-  const { octokit } = store.getState();
 
   const sidebarProvider = new SidebarProvider(context.extensionUri);
 
   context.subscriptions.push(
     vscode.window.registerWebviewViewProvider("flat-sidebar", sidebarProvider)
   );
-
-  // if (octokit) {
-  //   vscode.window.registerTreeDataProvider(
-  //     "workflowRuns",
-  //     new WorkflowRunsProvider(octokit)
-  //   );
-  // }
 
   context.subscriptions.push(
     vscode.commands.registerCommand("flat.saveAndCommitSql", saveAndCommitSql)
@@ -42,6 +28,10 @@ export async function activate(context: vscode.ExtensionContext) {
       scheme,
       new FlatProvider()
     )
+  );
+
+  context.subscriptions.push(
+    vscode.commands.registerCommand("flat.authWithGithub", authWithGithub)
   );
 
   context.subscriptions.push(

@@ -31,7 +31,8 @@
           "id": "flat-sidebar",
           "name": "Flat",
           "icon": "media/flat.svg",
-          "contextualTitle": "Flat"
+          "contextualTitle": "Flat",
+          "when": "flat:authedWithGithub == true"
         }
       ]
     },
@@ -52,15 +53,19 @@
     "commands": [
       {
         "command": "flat.createAction",
-        "title": "Create Action"
+        "title": "Flat: Create Action"
       },
       {
         "command": "flat.saveAndCommit",
-        "title": "Save and Commit Action"
+        "title": "Flat: Save and Commit Action"
       },
       {
         "command": "flat.saveAndCommitSql",
-        "title": "Save and Commit Action"
+        "title": "Flat: Save and Commit Action"
+      },
+      {
+        "command": "flat.authWithGithub",
+        "title": "Flat: Auth with GitHub"
       }
     ]
   },
@@ -105,6 +110,7 @@
     "query-string": "^6.14.0",
     "react": "^17.0.1",
     "react-dom": "^17.0.1",
+    "react-query": "^3.12.0",
     "tweetsodium": "^0.0.5",
     "typeorm": "^0.2.31",
     "zustand": "^3.3.2"

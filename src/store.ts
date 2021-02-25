@@ -4,8 +4,10 @@ import create from "zustand/vanilla";
 type FlatStore = {
   octokit: Octokit | undefined;
   connectionString: string;
+  sessionToken: string;
   setConnectionString: (sql: string) => void;
   setOctokit: (octokit: Octokit) => void;
+  setSessionToken: (sql: string) => void;
   reset: () => void;
 };
 
@@ -22,6 +24,10 @@ const store = create<FlatStore>((set) => ({
   },
   reset: () => {
     set({ connectionString: "" });
+  },
+  sessionToken: "",
+  setSessionToken: (sessionToken: string) => {
+    set({ sessionToken });
   },
 }));
 
