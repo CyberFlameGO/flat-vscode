@@ -55,7 +55,7 @@ function FormComponent() {
           placeholder="Enter name"
         />
         <button className="btn btn-primary w-full" type="submit">
-          Create Action
+          Create and Commit Action
         </button>
       </div>
     </Form>

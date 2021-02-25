@@ -89,14 +89,17 @@
     "@types/vscode": "^1.53.0",
     "@typescript-eslint/eslint-plugin": "^4.14.1",
     "@typescript-eslint/parser": "^4.14.1",
+    "add": "^2.0.6",
     "autoprefixer": "^10.2.4",
     "eslint": "^7.19.0",
     "glob": "^7.1.6",
     "mocha": "^8.2.1",
     "parcel": "^2.0.0-nightly.608",
+    "postcss-nested": "^5.0.3",
     "tailwindcss": "^2.0.3",
     "typescript": "^4.1.3",
-    "vscode-test": "^1.5.0"
+    "vscode-test": "^1.5.0",
+    "yarn": "^1.22.10"
   },
   "dependencies": {
     "@octokit/rest": "^18.1.0",

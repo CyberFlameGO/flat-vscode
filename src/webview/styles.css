@@ -527,12 +527,12 @@ body {
   .btn-primary {
     background: var(--vscode-badge-background);
     color: var(--vscode-badge-foreground);
-  }
 
-  .btn-primary:hover,
-  .btn-primary:focus,
-  .btn-primary:active {
-    color: var(--vscode-badge-foreground) !important;
+    &:hover,
+    &:focus,
+    &:active {
+      color: var(--vscode-badge-foreground) !important;
+    }
   }
 
   .btn-secondary {
@@ -545,10 +545,15 @@ form input[type="text"] {
   @apply h-8 text-sm;
   background: var(--vscode-input-background) !important;
   border-color: var(--vscode-input-border) !important;
-}
 
-form input[type="text"]::placeholder {
-  color: var(--vscode-input-placeholderForeground);
+  &::placeholder {
+    color: var(--vscode-input-placeholderForeground);
+  }
+
+  &:focus {
+    border-color: transparent !important;
+    outline-color: var(--vscode-badge-background) !important;
+  }
 }
 
 .form-error {

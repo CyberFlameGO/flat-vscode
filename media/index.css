@@ -1317,10 +1317,10 @@ body {
 }
 
 .btn-primary:hover,
-  .btn-primary:focus,
-  .btn-primary:active {
-  color: var(--vscode-badge-foreground) !important;
-}
+    .btn-primary:focus,
+    .btn-primary:active {
+    color: var(--vscode-badge-foreground) !important;
+  }
 
 .btn-secondary {
   background: var(--vscode-input-background);
@@ -31927,16 +31927,21 @@ form input[type="text"] {
 }
 
 form input[type="text"]::-moz-placeholder {
-  color: var(--vscode-input-placeholderForeground);
-}
+    color: var(--vscode-input-placeholderForeground);
+  }
 
 form input[type="text"]:-ms-input-placeholder {
-  color: var(--vscode-input-placeholderForeground);
-}
+    color: var(--vscode-input-placeholderForeground);
+  }
 
 form input[type="text"]::placeholder {
-  color: var(--vscode-input-placeholderForeground);
-}
+    color: var(--vscode-input-placeholderForeground);
+  }
+
+form input[type="text"]:focus {
+    border-color: transparent !important;
+    outline-color: var(--vscode-badge-background) !important;
+  }
 
 .form-error {
   font-size: 0.75rem;

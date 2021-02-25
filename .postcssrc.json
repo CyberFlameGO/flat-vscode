@@ -2,6 +2,7 @@
   "modules": false,
   "plugins": {
     "tailwindcss": {},
+    "postcss-nested": {},
     "autoprefixer": {}
   }
 }
