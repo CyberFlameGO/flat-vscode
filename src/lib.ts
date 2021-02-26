@@ -1,5 +1,4 @@
 import * as vscode from "vscode";
-import { URL } from "url";
 import { ConnectionString } from "connection-string";
 import { createConnection } from "typeorm";
 
@@ -48,31 +47,6 @@ jobs:
             : "\n"
         }
 `.replace(/^\s*[\r\n]/gm, "");
-}
-
-export function escapeRegExp(str: string) {
-  return str.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
-}
-
-export function makeRangeFromMatch(line: number, match: RegExpMatchArray) {
-  return new vscode.Range(
-    // @ts-ignore
-    new vscode.Position(line, match.index),
-    // @ts-ignore
-    new vscode.Position(line, match.index + match[0].length)
-  );
-}
-
-export function isValidUrl(input: string) {
-  let url;
-
-  try {
-    url = new URL(input);
-  } catch (_) {
-    return false;
-  }
-
-  return url.protocol === "http:" || url.protocol === "https:";
 }
 
 interface GetSessionParams {
