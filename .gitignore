@@ -5,3 +5,7 @@ node_modules
 .vscode-test/
 *.vsix
 yarn-error.log
+media/index.css
+media/index.css.map
+media/index.js
+media/index.js.map
