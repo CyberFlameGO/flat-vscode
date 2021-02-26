@@ -31918,6 +31918,21 @@ body {
           animation: bounce 1s infinite;
 }
 
+form input[type="radio"]:hover,
+  form input[type="radio"]:focus,
+  form input[type="radio"]:active {
+    box-shadow: 0 0 0 1px var(--vscode-badge-background);
+  }
+
+form input[type="radio"]:checked {
+    background-color: var(--vscode-badge-background);
+  }
+
+form input[type="radio"]:checked,
+  form input[type="radio"]:checked:focus {
+    background-color: var(--vscode-badge-background) !important;
+  }
+
 form input[type="text"] {
   height: 2rem;
   font-size: 0.875rem;
@@ -31939,8 +31954,8 @@ form input[type="text"]::placeholder {
   }
 
 form input[type="text"]:focus {
+    box-shadow: inset 0 0 0 1px var(--vscode-badge-background) !important;
     border-color: transparent !important;
-    outline-color: var(--vscode-badge-background) !important;
   }
 
 .form-error {
