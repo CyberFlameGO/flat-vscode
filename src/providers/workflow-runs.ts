@@ -3,7 +3,7 @@ import { Endpoints } from "@octokit/types";
 import * as vscode from "vscode";
 import { formatRelative, differenceInSeconds } from "date-fns";
 
-import { VSCodeGit } from "../lib";
+import { VSCodeGit } from "../git";
 
 type listWorkflowRunsResponse = Endpoints["GET /repos/{owner}/{repo}/actions/runs"]["response"];
 type listWorkflowJobsResponse = Endpoints["GET /repos/{owner}/{repo}/actions/runs/{run_id}/jobs"]["response"];

@@ -1,12 +1,7 @@
 import * as vscode from "vscode";
 
 import { SidebarProvider } from "./providers";
-import {
-  createAction,
-  saveAndCommit,
-  saveAndCommitSql,
-  authWithGithub,
-} from "./commands";
+import { saveAndCommit, saveAndCommitSql, authWithGithub } from "./commands";
 import store from "./store";
 
 export async function activate(context: vscode.ExtensionContext) {
@@ -38,10 +33,6 @@ export async function activate(context: vscode.ExtensionContext) {
     vscode.commands.registerCommand("flat.authWithGithub", () =>
       authWithGithub(true)
     )
-  );
-
-  context.subscriptions.push(
-    vscode.commands.registerCommand("flat.createAction", createAction)
   );
 
   context.subscriptions.push(

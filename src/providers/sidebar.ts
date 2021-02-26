@@ -1,7 +1,8 @@
 import * as vscode from "vscode";
 
 import store from "../store";
-import { getNonce, testConnection, VSCodeGit } from "../lib";
+import { getNonce, testConnection } from "../lib";
+import { VSCodeGit } from "../git";
 
 export class SidebarProvider implements vscode.WebviewViewProvider {
   _view?: vscode.WebviewView;

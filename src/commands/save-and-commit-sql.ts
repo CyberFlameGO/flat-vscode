@@ -4,7 +4,8 @@ import * as fs from "fs";
 
 import store from "../store";
 import { authWithGithub } from "./auth-with-github";
-import { VSCodeGit, makeActionYaml } from "../lib";
+import { makeActionYaml } from "../lib";
+import { VSCodeGit } from "../git";
 
 const sodium = require("tweetsodium");
 

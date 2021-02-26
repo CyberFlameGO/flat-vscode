@@ -3,11 +3,6 @@ import { URL } from "url";
 import { ConnectionString } from "connection-string";
 import { createConnection } from "typeorm";
 
-import { GitAPI } from "./types";
-import { flatDecoration } from "./decorations";
-
-const GitUrlParse = require("git-url-parse");
-
 interface ActionParams {
   type?: string;
   name?: string;
@@ -63,102 +58,6 @@ jobs:
 `.replace(/^\s*[\r\n]/gm, "");
 }
 
-interface GitExtension {
-  getAPI(version: number): GitAPI;
-}
-
-export class VSCodeGit {
-  extension: vscode.Extension<GitExtension>;
-
-  constructor() {
-    const gitExtension = vscode.extensions.getExtension("vscode.git");
-
-    if (!gitExtension) {
-      throw new Error("Git extension not found");
-    }
-
-    this.extension = gitExtension;
-  }
-
-  async activateExtension() {
-    await this.extension.activate();
-  }
-
-  get rawGit() {
-    // Unsure about this magic number, but it works.
-    return this.extension.exports.getAPI(1);
-  }
-
-  waitForRepo(times: number): Promise<{ name: string; owner: string }> {
-    let count = 0;
-
-    return new Promise((resolve, reject) => {
-      const checkRepoExists = setInterval(() => {
-        const remotes = this.repository._repository.remotes;
-        if (remotes.length > 0) {
-          const remote = remotes[0];
-          const parsed = GitUrlParse(remote.pushUrl);
-          clearInterval(checkRepoExists);
-          resolve({
-            name: parsed.name,
-            owner: parsed.owner,
-          });
-        } else {
-          if (count === times) {
-            clearInterval(checkRepoExists);
-            reject(new Error("Couldnt get repo details"));
-          }
-          count++;
-        }
-      }, 1000);
-    });
-  }
-
-  get repoDetails() {
-    const remotes = this.repository._repository.remotes;
-    if (remotes.length === 0) {
-      throw new Error(
-        "No remotes found. Are you sure you've created an upstream repo?"
-      );
-    }
-
-    const remote = remotes[0];
-    const parsed = GitUrlParse(remote.pushUrl);
-    return {
-      name: parsed.name,
-      owner: parsed.owner,
-    };
-  }
-
-  get repository() {
-    return this.rawGit.repositories[0];
-  }
-
-  get workingTreeChanges() {
-    if (!this.repository) {
-      throw new Error("No repository found. Are you sure you're in a repo?");
-    }
-
-    return this.repository.state.workingTreeChanges;
-  }
-
-  add(resources: vscode.Uri[]) {
-    if (!this.repository) {
-      throw new Error("No repository found. Are you sure you're in a repo?");
-    }
-
-    this.repository._repository.add(resources);
-  }
-
-  commit(message: string) {
-    if (!this.repository) {
-      throw new Error("No repository found. Are you sure you're in a repo?");
-    }
-
-    this.repository._repository.commit(message);
-  }
-}
-
 export function escapeRegExp(str: string) {
   return str.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
 }
@@ -182,83 +81,6 @@ export function isValidUrl(input: string) {
   }
 
   return url.protocol === "http:" || url.protocol === "https:";
-}
-
-interface BuildHtmlYamlParams {
-  name: string;
-  cron: string;
-  source: string;
-}
-
-export async function buildHtmlYaml(params: BuildHtmlYamlParams) {
-  const { name, source, cron } = params;
-
-  const uri = vscode.Uri.parse(
-    `flat:/schedule.yaml?name=${name}&cron=${cron}&source=${source}&type=html`
-  );
-  let doc = await vscode.workspace.openTextDocument(uri);
-  await vscode.window.showTextDocument(doc, { preview: false });
-
-  const editor = vscode.window.activeTextEditor;
-
-  if (!editor) {
-    return;
-  }
-
-  const decorations: vscode.DecorationOptions[] = [];
-  const sourceCode = editor.document.getText();
-  const sourceCodeArr = sourceCode.split("\n");
-
-  const nameRegex = new RegExp(name);
-  const cronRegex = new RegExp(escapeRegExp(cron));
-  const sourceRegex = new RegExp(source, "i");
-
-  for (let line = 0; line < sourceCodeArr.length; line++) {
-    const nameMatch = sourceCodeArr[line].match(nameRegex);
-    const cronMatch = sourceCodeArr[line].match(cronRegex);
-    const sourceMatch = sourceCodeArr[line].match(sourceRegex);
-
-    if (nameMatch) {
-      const nameDecoration = {
-        range: makeRangeFromMatch(line, nameMatch),
-        hoverMessage: "Name of action",
-      };
-      decorations.push(nameDecoration);
-    }
-
-    if (cronMatch) {
-      const cronDecoration = {
-        range: makeRangeFromMatch(line, cronMatch),
-        hoverMessage: "CRON Schedule",
-      };
-      decorations.push(cronDecoration);
-    }
-
-    if (sourceMatch) {
-      const sourceDecoration = {
-        range: makeRangeFromMatch(line, sourceMatch),
-        hoverMessage: "Data Source",
-      };
-      decorations.push(sourceDecoration);
-    }
-  }
-
-  editor.setDecorations(flatDecoration, decorations);
-}
-
-interface BuildSqlYamlParams {
-  cron: string;
-  name: string;
-}
-
-export async function buildSqlYaml(params: BuildSqlYamlParams) {
-  const { cron, name } = params;
-
-  const uri = vscode.Uri.parse(
-    `flat:/schedule.yaml?name=${name}&cron=${cron}&type=sql`
-  );
-  let doc = await vscode.workspace.openTextDocument(uri);
-  await vscode.window.showTextDocument(doc, { preview: false });
 }
 
 interface GetSessionParams {

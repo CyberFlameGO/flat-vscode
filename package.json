@@ -35,25 +35,7 @@
         }
       ]
     },
-    "menus": {
-      "editor/title": [
-        {
-          "command": "flat.saveAndCommit",
-          "group": "navigation",
-          "when": "resourceScheme == flat && flat:actionType == 'html'"
-        },
-        {
-          "command": "flat.saveAndCommitSql",
-          "group": "navigation",
-          "when": "resourceScheme == flat && flat:actionType == 'sql'"
-        }
-      ]
-    },
     "commands": [
-      {
-        "command": "flat.createAction",
-        "title": "Flat: Create Action"
-      },
       {
         "command": "flat.saveAndCommit",
         "title": "Flat: Save and Commit Action"
