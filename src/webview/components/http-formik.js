@@ -8,12 +8,14 @@ import { InputGroup, CronInputGroup } from "../components/forms";
 
 const initialValues = {
   source: "",
+  outfile: "data.json",
   cron: "",
   name: "",
 };
 
 const validationSchema = yup.object().shape({
   source: yup.string().url("URL is invalid.").required("Please enter a URL"),
+  outfile: yup.string().required("Please enter a valid filename"),
   cron: yup
     .string()
     .required("Please enter a CRON schedule")
@@ -52,6 +54,13 @@ function FormComponent({ status, isSubmitting }) {
           description="Once every..."
         />
         <InputGroup
+          name="outfile"
+          label="The filename to use for writing data?"
+          id="outfile"
+          description="e.g., data.json"
+          placeholder="Enter filename"
+        />
+        <InputGroup
           name="name"
           label="What should we call this action?"
           id="name"
@@ -69,9 +78,9 @@ function FormComponent({ status, isSubmitting }) {
   );
 }
 
-export function HTMLFormik({ onSubmit, status }) {
+export function HTTPFormik({ onSubmit, status }) {
   if (status === "success") {
-    return <Redirect to="/html-success" />;
+    return <Redirect to="/http-success" />;
   } else {
     return (
       <Formik

@@ -2,8 +2,8 @@ import React from "react";
 import { BrowserRouter as Router, Switch, Route, Link } from "react-router-dom";
 
 import { CreateSQLWorkflow } from "../pages/create-sql-workflow";
-import { CreateHTMLWorkflow } from "../pages/create-html-workflow";
-import { CreateHTMLSuccess } from "../pages/create-html-success";
+import { CreateHTTPWorkflow } from "../pages/create-http-workflow";
+import { CreateHTTPSuccess } from "../pages/create-http-success";
 import { CreateSQLSuccess } from "../pages/create-sql-success";
 
 function Home() {
@@ -15,7 +15,7 @@ function Home() {
         <p className="text-xs opacity-50">
           I can read the data I want from a URL
         </p>
-        <Link className="btn btn-primary w-full" to="/html">
+        <Link className="btn btn-primary w-full" to="/http">
           Create HTTP Action
         </Link>
       </div>
@@ -42,11 +42,11 @@ export function CreateWorkflow() {
           <CreateSQLSuccess />
         </Route>
         {/* TODO: Fix me to be HTTP */}
-        <Route path="/html">
-          <CreateHTMLWorkflow />
+        <Route path="/http">
+          <CreateHTTPWorkflow />
         </Route>
-        <Route path="/html-success">
-          <CreateHTMLSuccess />
+        <Route path="/http-success">
+          <CreateHTTPSuccess />
         </Route>
         <Route path="/">
           <Home />

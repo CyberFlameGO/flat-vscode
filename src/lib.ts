@@ -3,15 +3,16 @@ import { ConnectionString } from "connection-string";
 import { createConnection } from "typeorm";
 
 interface ActionParams {
-  type?: string;
+  type: "sql" | "http";
   name?: string;
   cron?: string;
   source?: string;
   format?: string;
+  outfile?: string;
 }
 
 export function makeActionYaml(params: ActionParams) {
-  const { name, cron, type, source, format } = params;
+  const { name, cron, type, source, format, outfile } = params;
   return `name: ${name}
 
 on:
@@ -31,7 +32,9 @@ jobs:
     - name: Fetch data
       uses: githubocto/flat@v1
       with:
-        ${type === "html" ? `url: '${source}'` : ""}
+        type: ${type}
+        ${type === "http" ? `url: '${source}'` : ""}
+        ${type === "http" ? `outfile: ${outfile}` : ""}
         ${type === "sql" ? `format: ${format}` : ""}
         ${
           type === "sql"
@@ -44,8 +47,8 @@ jobs:
         ${
           type === "sql"
             ? `
-      # After hitting "Save and Commit Action", you'll be prompted to write your SQL query.
-        queryfile: query.sql`
+        # After hitting "Save and Commit Action", you'll be prompted to write your SQL query.
+          queryfile: query.sql`
             : "\n"
         }
 `.replace(/^\s*[\r\n]/gm, "");
