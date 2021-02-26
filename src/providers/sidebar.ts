@@ -39,9 +39,18 @@ export class SidebarProvider implements vscode.WebviewViewProvider {
           await updateWebview();
         case "create-html-workflow":
           console.log("Creating html workflow", data.payload);
-          setTimeout(() => {
+          try {
+            await vscode.commands.executeCommand(
+              "flat.saveAndCommit",
+              data.payload
+            );
             webviewView.webview.postMessage({ command: "create-html-success" });
-          }, 2000);
+          } catch (e) {
+            webviewView.webview.postMessage({
+              command: "create-html-error",
+              payload: e,
+            });
+          }
       }
     });
   }

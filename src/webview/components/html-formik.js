@@ -36,7 +36,6 @@ function FormComponent({ status, isSubmitting }) {
 
   return (
     <Form>
-      {status}
       <div className="space-y-8">
         <InputGroup
           name="source"
