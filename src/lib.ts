@@ -28,7 +28,7 @@ jobs:
     - name: Check out repo
       uses: actions/checkout@v2
     - name: Fetch data
-      uses: githubocto/flat-action@v1
+      uses: githubocto/flat@v1
       with:
         ${type === "html" ? `url: '${source}'` : ""}
         ${

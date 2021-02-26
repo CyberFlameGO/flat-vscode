@@ -46,7 +46,6 @@ export class SidebarProvider implements vscode.WebviewViewProvider {
               command: "database-connect-success",
             });
           } catch (e) {
-            console.log(e);
             webviewView.webview.postMessage({
               command: "database-connect-error",
             });

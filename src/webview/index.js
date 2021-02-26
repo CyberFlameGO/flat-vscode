@@ -11,11 +11,6 @@ const appEl = document.getElementById("app");
 const initialState = JSON.parse(appEl.getAttribute("data-state"));
 const queryClient = new QueryClient();
 
-// INCANTATION FOR GETTING STATE
-// const vscode = acquireVsCodeApi();
-// const previousState = vscode.getState();
-// console.log(vscode, previousState);
-
 useStore.setState({
   ...initialState,
   octokit: initialState.sessionToken
@@ -24,8 +19,6 @@ useStore.setState({
       })
     : null,
 });
-
-console.log("booted with", initialState);
 
 ReactDOM.render(
   <QueryClientProvider client={queryClient}>
