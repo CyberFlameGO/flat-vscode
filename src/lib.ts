@@ -8,10 +8,11 @@ interface ActionParams {
   cron?: string;
   source?: string;
   format?: string;
+  outfile?: string;
 }
 
 export function makeActionYaml(params: ActionParams) {
-  const { name, cron, type, source, format } = params;
+  const { name, cron, type, source, format, outfile } = params;
   return `name: ${name}
 
 on:
@@ -31,7 +32,9 @@ jobs:
     - name: Fetch data
       uses: githubocto/flat@v1
       with:
+        type: ${type}
         ${type === "html" ? `url: '${source}'` : ""}
+        ${type === "html" ? `outfile: ${outfile}` : ""}
         ${type === "sql" ? `format: ${format}` : ""}
         ${
           type === "sql"

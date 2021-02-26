@@ -9,10 +9,10 @@ interface Params {
   cron: string;
   name: string;
   source: string;
+  outfile: string;
 }
 
 export const saveAndCommit = async (params: Params) => {
-  console.log("saving and committing HTML");
   // Initialize git client.
   const gitClient = new VSCodeGit();
   await gitClient.activateExtension();
