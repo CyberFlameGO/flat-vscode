@@ -1311,6 +1311,11 @@ body {
   padding-right: 1rem;
 }
 
+.btn:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+  }
+
 .btn-primary {
   background: var(--vscode-badge-background);
   color: var(--vscode-badge-foreground);

@@ -37,6 +37,11 @@ export class SidebarProvider implements vscode.WebviewViewProvider {
         case "auth-with-github":
           await vscode.commands.executeCommand("flat.authWithGithub");
           await updateWebview();
+        case "create-html-workflow":
+          console.log("Creating html workflow", data.payload);
+          setTimeout(() => {
+            webviewView.webview.postMessage({ command: "create-html-success" });
+          }, 2000);
       }
     });
   }
@@ -51,9 +56,6 @@ export class SidebarProvider implements vscode.WebviewViewProvider {
     await gitClient.activateExtension();
 
     const { sessionToken } = store.getState();
-    console.log("****** GETTING HTML *******");
-    console.log(sessionToken);
-    console.log("****** GETTING HTML*******");
 
     const stylesPath = vscode.Uri.joinPath(
       this._extensionUri,

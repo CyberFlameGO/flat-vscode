@@ -31,9 +31,12 @@ const validationSchema = yup.object().shape({
   name: yup.string().required("Please enter a Name"),
 });
 
-function FormComponent() {
+function FormComponent({ status, isSubmitting }) {
+  const isLoading = status === "loading" || isSubmitting;
+
   return (
     <Form>
+      {status}
       <div className="space-y-8">
         <InputGroup
           name="source"
@@ -54,22 +57,26 @@ function FormComponent() {
           id="name"
           placeholder="Enter name"
         />
-        <button className="btn btn-primary w-full" type="submit">
-          Create and Commit Action
+        <button
+          disabled={isLoading}
+          className="btn btn-primary w-full"
+          type="submit"
+        >
+          {isLoading ? "Creating..." : "Create and Commit Action"}
         </button>
       </div>
     </Form>
   );
 }
 
-export function HTMLFormik({ onSubmit }) {
+export function HTMLFormik({ onSubmit, status }) {
   return (
     <Formik
       initialValues={initialValues}
       validateOnChange={false}
       validateOnBlur={false}
       validationSchema={validationSchema}
-      component={FormComponent}
+      component={(props) => <FormComponent {...props} status={status} />}
       onSubmit={onSubmit}
     />
   );

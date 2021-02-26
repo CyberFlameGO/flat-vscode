@@ -1,10 +1,31 @@
 import React from "react";
 import { Link } from "react-router-dom";
+import { useEvent } from "react-use";
+
 import { HTMLFormik } from "../components/html-formik";
+import { vscode } from "../lib";
 
 export function CreateHTMLWorkflow() {
-  const handleSubmit = (values) => {
-    console.log(values);
+  const [status, setStatus] = React.useState("idle");
+
+  const handleMessage = (e) => {
+    const message = e.data;
+    switch (message.command) {
+      case "create-html-success":
+        console.log("we did it");
+        setStatus("idle");
+    }
+  };
+
+  useEvent("message", handleMessage);
+
+  const handleSubmit = async (values) => {
+    await vscode.postMessage({
+      command: "create-html-workflow",
+      payload: values,
+    });
+
+    setStatus("loading");
   };
 
   return (
@@ -19,7 +40,7 @@ export function CreateHTMLWorkflow() {
         </div>
       </header>
       <div className="my-4">
-        <HTMLFormik onSubmit={handleSubmit} />
+        <HTMLFormik status={status} onSubmit={handleSubmit} />
       </div>
     </div>
   );

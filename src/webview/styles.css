@@ -522,6 +522,11 @@ body {
 @layer components {
   .btn {
     @apply inline-flex items-center justify-center h-8 px-4 font-semibold text-sm;
+
+    &:disabled {
+      opacity: 0.5;
+      cursor: not-allowed;
+    }
   }
 
   .btn-primary {
