@@ -3,7 +3,7 @@ import { ConnectionString } from "connection-string";
 import { createConnection } from "typeorm";
 
 interface ActionParams {
-  type?: string;
+  type: "sql" | "http";
   name?: string;
   cron?: string;
   source?: string;
@@ -33,8 +33,8 @@ jobs:
       uses: githubocto/flat@v1
       with:
         type: ${type}
-        ${type === "html" ? `url: '${source}'` : ""}
-        ${type === "html" ? `outfile: ${outfile}` : ""}
+        ${type === "http" ? `url: '${source}'` : ""}
+        ${type === "http" ? `outfile: ${outfile}` : ""}
         ${type === "sql" ? `format: ${format}` : ""}
         ${
           type === "sql"
@@ -47,8 +47,8 @@ jobs:
         ${
           type === "sql"
             ? `
-      # After hitting "Save and Commit Action", you'll be prompted to write your SQL query.
-        queryfile: query.sql`
+        # After hitting "Save and Commit Action", you'll be prompted to write your SQL query.
+          queryfile: query.sql`
             : "\n"
         }
 `.replace(/^\s*[\r\n]/gm, "");

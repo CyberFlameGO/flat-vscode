@@ -36,7 +36,7 @@ export const saveAndCommit = async (params: Params) => {
 
   // Make YAML, given params
   const action = makeActionYaml({
-    type: "html",
+    type: "http",
     ...params,
   });
 

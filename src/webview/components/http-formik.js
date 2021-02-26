@@ -78,9 +78,9 @@ function FormComponent({ status, isSubmitting }) {
   );
 }
 
-export function HTMLFormik({ onSubmit, status }) {
+export function HTTPFormik({ onSubmit, status }) {
   if (status === "success") {
-    return <Redirect to="/html-success" />;
+    return <Redirect to="/http-success" />;
   } else {
     return (
       <Formik
