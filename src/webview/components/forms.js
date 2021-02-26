@@ -49,6 +49,26 @@ export function InputGroup({
   );
 }
 
+export function FormatInputGroup({ id, label, name, description }) {
+  return (
+    <div>
+      <InputGroupHeader id={id} label={label} description={description} />
+      <div className=" mt-2">
+        <div className="flex items-center space-x-4" role="group">
+          <label className="flex items-center space-x-1">
+            <Field type="radio" name={name} value="json" />
+            <span>JSON</span>
+          </label>
+          <label className="flex items-center space-x-1">
+            <Field type="radio" name={name} value="csv" />
+            <span>CSV</span>
+          </label>
+        </div>
+      </div>
+    </div>
+  );
+}
+
 const defaultSchedules = {
   fiveMinutes: "* * * * *",
   hour: "0 * * * *",

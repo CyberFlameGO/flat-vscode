@@ -4,13 +4,18 @@ import * as yup from "yup";
 import * as cronstrue from "cronstrue";
 import { Redirect } from "react-router-dom";
 
-import { InputGroup, CronInputGroup } from "../components/forms";
+import {
+  InputGroup,
+  CronInputGroup,
+  FormatInputGroup,
+} from "../components/forms";
 import { vscode } from "../lib";
 
 const initialValues = {
   source: "",
   cron: "",
   name: "",
+  format: "json",
 };
 
 const validationSchema = yup.object().shape({
@@ -62,6 +67,7 @@ const validationSchema = yup.object().shape({
       }
     ),
   name: yup.string().required("Please enter a Name"),
+  format: yup.string().required("Please choose a format"),
 });
 
 function FormComponent({ status, isSubmitting, isValid }) {
@@ -88,6 +94,11 @@ function FormComponent({ status, isSubmitting, isValid }) {
           label="What should we call this action?"
           id="name"
           placeholder="Enter name"
+        />
+        <FormatInputGroup
+          name="format"
+          label="What format should we save the data as?"
+          id="format"
         />
         <button
           disabled={isLoading}

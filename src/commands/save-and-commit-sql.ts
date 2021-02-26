@@ -13,6 +13,7 @@ interface Params {
   cron: string;
   source: string;
   name: string;
+  format: string;
 }
 
 export async function saveAndCommitSql(params: Params) {
@@ -27,7 +28,7 @@ export async function saveAndCommitSql(params: Params) {
     return;
   }
 
-  const { cron, source, name: actionName } = params;
+  const { cron, source, name: actionName, format } = params;
 
   // Next, let's grab the repo name.
   const { name, owner } = gitClient.repoDetails;
@@ -72,6 +73,7 @@ export async function saveAndCommitSql(params: Params) {
     name: actionName,
     source,
     cron,
+    format,
   });
 
   const folders = vscode.workspace.workspaceFolders;
