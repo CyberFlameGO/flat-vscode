@@ -544,6 +544,20 @@ body {
     background: var(--vscode-input-background);
     color: var(--vscode-input-foreground);
   }
+
+  .alert {
+    @apply p-4;
+  }
+
+  .alert-success {
+    background-color: var(--vscode-terminal-ansiGreen);
+    color: rgba(0, 0, 0, 0.5);
+  }
+
+  .alert-error {
+    background-color: var(--vscode-terminal-ansiRed);
+    color: rgba(0, 0, 0, 0.75);
+  }
 }
 
 form input[type="radio"] {

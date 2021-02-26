@@ -51,8 +51,4 @@ export const saveAndCommit = async (params: Params) => {
   // Add and commit.
   await gitClient.add([vscode.Uri.parse(path.join(workflowsDir, "flat.yaml"))]);
   await gitClient.commit("feat: add flat.yaml workflow");
-  await vscode.commands.executeCommand("workbench.action.closeActiveEditor");
-  vscode.window.showInformationMessage(
-    "Created and committed flat.yml 🎊! Push to GitHub to trigger the action."
-  );
 };

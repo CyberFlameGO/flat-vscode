@@ -12,8 +12,7 @@ export function CreateHTMLWorkflow() {
     const message = e.data;
     switch (message.command) {
       case "create-html-success":
-        console.log("we did it");
-        setStatus("idle");
+        setStatus("success");
     }
   };
 

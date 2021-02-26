@@ -2,6 +2,7 @@ import React from "react";
 import { Formik, Form } from "formik";
 import * as yup from "yup";
 import * as cronstrue from "cronstrue";
+import { Redirect } from "react-router-dom";
 
 import { InputGroup, CronInputGroup } from "../components/forms";
 
@@ -69,14 +70,18 @@ function FormComponent({ status, isSubmitting }) {
 }
 
 export function HTMLFormik({ onSubmit, status }) {
-  return (
-    <Formik
-      initialValues={initialValues}
-      validateOnChange={false}
-      validateOnBlur={false}
-      validationSchema={validationSchema}
-      component={(props) => <FormComponent {...props} status={status} />}
-      onSubmit={onSubmit}
-    />
-  );
+  if (status === "success") {
+    return <Redirect to="/html-success" />;
+  } else {
+    return (
+      <Formik
+        initialValues={initialValues}
+        validateOnChange={false}
+        validateOnBlur={false}
+        validationSchema={validationSchema}
+        component={(props) => <FormComponent {...props} status={status} />}
+        onSubmit={onSubmit}
+      />
+    );
+  }
 }

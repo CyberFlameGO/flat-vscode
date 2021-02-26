@@ -34759,6 +34759,7 @@ try {
   var _reactRouterDom = require("react-router-dom");
   var _pagesCreateSqlWorkflow = require("../pages/create-sql-workflow");
   var _pagesCreateHtmlWorkflow = require("../pages/create-html-workflow");
+  var _pagesCreateHtmlSuccess = require("../pages/create-html-success");
   var _jsxFileName = "/Users/mattrothenberg/workspace/github/flat/src/webview/components/create-workflow.js";
   function Home() {
     return (
@@ -34767,21 +34768,21 @@ try {
         __self: this,
         __source: {
           fileName: _jsxFileName,
-          lineNumber: 9,
+          lineNumber: 10,
           columnNumber: 5
         }
       }, /*#__PURE__*/_reactDefault.default.createElement("p", {
         __self: this,
         __source: {
           fileName: _jsxFileName,
-          lineNumber: 10,
+          lineNumber: 11,
           columnNumber: 7
         }
       }, "Create an automated data fetcher with Flat."), /*#__PURE__*/_reactDefault.default.createElement("p", {
         __self: this,
         __source: {
           fileName: _jsxFileName,
-          lineNumber: 11,
+          lineNumber: 12,
           columnNumber: 7
         }
       }, "How are you getting the data?"), /*#__PURE__*/_reactDefault.default.createElement("div", {
@@ -34789,7 +34790,7 @@ try {
         __self: this,
         __source: {
           fileName: _jsxFileName,
-          lineNumber: 12,
+          lineNumber: 13,
           columnNumber: 7
         }
       }, /*#__PURE__*/_reactDefault.default.createElement("p", {
@@ -34797,7 +34798,7 @@ try {
         __self: this,
         __source: {
           fileName: _jsxFileName,
-          lineNumber: 13,
+          lineNumber: 14,
           columnNumber: 9
         }
       }, "I can read the data I want from a URL"), /*#__PURE__*/_reactDefault.default.createElement(_reactRouterDom.Link, {
@@ -34806,7 +34807,7 @@ try {
         __self: this,
         __source: {
           fileName: _jsxFileName,
-          lineNumber: 16,
+          lineNumber: 17,
           columnNumber: 9
         }
       }, "Create HTTP Action")), /*#__PURE__*/_reactDefault.default.createElement("div", {
@@ -34814,7 +34815,7 @@ try {
         __self: this,
         __source: {
           fileName: _jsxFileName,
-          lineNumber: 20,
+          lineNumber: 21,
           columnNumber: 7
         }
       }, /*#__PURE__*/_reactDefault.default.createElement("p", {
@@ -34822,7 +34823,7 @@ try {
         __self: this,
         __source: {
           fileName: _jsxFileName,
-          lineNumber: 21,
+          lineNumber: 22,
           columnNumber: 9
         }
       }, "I can read the data I want from a URL"), /*#__PURE__*/_reactDefault.default.createElement(_reactRouterDom.Link, {
@@ -34831,7 +34832,7 @@ try {
         __self: this,
         __source: {
           fileName: _jsxFileName,
-          lineNumber: 24,
+          lineNumber: 25,
           columnNumber: 9
         }
       }, "Create SQL Action")))
@@ -34844,14 +34845,14 @@ try {
         __self: this,
         __source: {
           fileName: _jsxFileName,
-          lineNumber: 34,
+          lineNumber: 35,
           columnNumber: 5
         }
       }, /*#__PURE__*/_reactDefault.default.createElement(_reactRouterDom.Switch, {
         __self: this,
         __source: {
           fileName: _jsxFileName,
-          lineNumber: 35,
+          lineNumber: 36,
           columnNumber: 7
         }
       }, /*#__PURE__*/_reactDefault.default.createElement(_reactRouterDom.Route, {
@@ -34859,14 +34860,14 @@ try {
         __self: this,
         __source: {
           fileName: _jsxFileName,
-          lineNumber: 36,
+          lineNumber: 37,
           columnNumber: 9
         }
       }, /*#__PURE__*/_reactDefault.default.createElement(_pagesCreateSqlWorkflow.CreateSQLWorkflow, {
         __self: this,
         __source: {
           fileName: _jsxFileName,
-          lineNumber: 37,
+          lineNumber: 38,
           columnNumber: 11
         }
       })), /*#__PURE__*/_reactDefault.default.createElement(_reactRouterDom.Route, {
@@ -34874,14 +34875,29 @@ try {
         __self: this,
         __source: {
           fileName: _jsxFileName,
-          lineNumber: 39,
+          lineNumber: 40,
           columnNumber: 9
         }
       }, /*#__PURE__*/_reactDefault.default.createElement(_pagesCreateHtmlWorkflow.CreateHTMLWorkflow, {
         __self: this,
         __source: {
           fileName: _jsxFileName,
-          lineNumber: 40,
+          lineNumber: 41,
+          columnNumber: 11
+        }
+      })), /*#__PURE__*/_reactDefault.default.createElement(_reactRouterDom.Route, {
+        path: "/html-success",
+        __self: this,
+        __source: {
+          fileName: _jsxFileName,
+          lineNumber: 43,
+          columnNumber: 9
+        }
+      }, /*#__PURE__*/_reactDefault.default.createElement(_pagesCreateHtmlSuccess.CreateHTMLSuccess, {
+        __self: this,
+        __source: {
+          fileName: _jsxFileName,
+          lineNumber: 44,
           columnNumber: 11
         }
       })), /*#__PURE__*/_reactDefault.default.createElement(_reactRouterDom.Route, {
@@ -34889,14 +34905,14 @@ try {
         __self: this,
         __source: {
           fileName: _jsxFileName,
-          lineNumber: 42,
+          lineNumber: 46,
           columnNumber: 9
         }
       }, /*#__PURE__*/_reactDefault.default.createElement(Home, {
         __self: this,
         __source: {
           fileName: _jsxFileName,
-          lineNumber: 43,
+          lineNumber: 47,
           columnNumber: 11
         }
       }))))
@@ -34912,7 +34928,7 @@ try {
   window.$RefreshSig$ = prevRefreshSig;
 }
 
-},{"react":"3b2NM","react-router-dom":"1PMSK","../pages/create-sql-workflow":"64q1b","../pages/create-html-workflow":"62MoW","@parcel/transformer-js/lib/esmodule-helpers.js":"5gA8y","../../../node_modules/@parcel/transformer-react-refresh-wrap/lib/helpers/helpers.js":"4Jj4f"}],"1PMSK":[function(require,module,exports) {
+},{"react":"3b2NM","react-router-dom":"1PMSK","../pages/create-sql-workflow":"64q1b","../pages/create-html-workflow":"62MoW","@parcel/transformer-js/lib/esmodule-helpers.js":"5gA8y","../../../node_modules/@parcel/transformer-react-refresh-wrap/lib/helpers/helpers.js":"4Jj4f","../pages/create-html-success":"64LDg"}],"1PMSK":[function(require,module,exports) {
 "use strict";
 if ("development" === "production") {
   module.exports = require("./cjs/react-router-dom.min.js");
@@ -38884,8 +38900,7 @@ try {
       const message = e.data;
       switch (message.command) {
         case "create-html-success":
-          console.log("we did it");
-          setStatus("idle");
+          setStatus("success");
       }
     };
     _reactUse.useEvent("message", handleMessage);
@@ -38901,14 +38916,14 @@ try {
         __self: this,
         __source: {
           fileName: _jsxFileName,
-          lineNumber: 32,
+          lineNumber: 31,
           columnNumber: 5
         }
       }, /*#__PURE__*/_reactDefault.default.createElement("header", {
         __self: this,
         __source: {
           fileName: _jsxFileName,
-          lineNumber: 33,
+          lineNumber: 32,
           columnNumber: 7
         }
       }, /*#__PURE__*/_reactDefault.default.createElement("div", {
@@ -38916,7 +38931,7 @@ try {
         __self: this,
         __source: {
           fileName: _jsxFileName,
-          lineNumber: 34,
+          lineNumber: 33,
           columnNumber: 9
         }
       }, /*#__PURE__*/_reactDefault.default.createElement(_reactRouterDom.Link, {
@@ -38925,14 +38940,14 @@ try {
         __self: this,
         __source: {
           fileName: _jsxFileName,
-          lineNumber: 35,
+          lineNumber: 34,
           columnNumber: 11
         }
       }, "Home"), /*#__PURE__*/_reactDefault.default.createElement("span", {
         __self: this,
         __source: {
           fileName: _jsxFileName,
-          lineNumber: 38,
+          lineNumber: 37,
           columnNumber: 11
         }
       }, ">"), /*#__PURE__*/_reactDefault.default.createElement("span", {
@@ -38940,7 +38955,7 @@ try {
         __self: this,
         __source: {
           fileName: _jsxFileName,
-          lineNumber: 39,
+          lineNumber: 38,
           columnNumber: 11
         }
       }, "Create HTTP Action"))), /*#__PURE__*/_reactDefault.default.createElement("div", {
@@ -38948,7 +38963,7 @@ try {
         __self: this,
         __source: {
           fileName: _jsxFileName,
-          lineNumber: 42,
+          lineNumber: 41,
           columnNumber: 7
         }
       }, /*#__PURE__*/_reactDefault.default.createElement(_componentsHtmlFormik.HTMLFormik, {
@@ -38957,7 +38972,7 @@ try {
         __self: this,
         __source: {
           fileName: _jsxFileName,
-          lineNumber: 43,
+          lineNumber: 42,
           columnNumber: 9
         }
       })))
@@ -38991,6 +39006,7 @@ try {
   var _formik = require("formik");
   var _yup = require("yup");
   var _cronstrue = require("cronstrue");
+  var _reactRouterDom = require("react-router-dom");
   var _componentsForms = require("../components/forms");
   var _jsxFileName = "/Users/mattrothenberg/workspace/github/flat/src/webview/components/html-formik.js";
   function _extends() {
@@ -39031,7 +39047,7 @@ try {
         __self: this,
         __source: {
           fileName: _jsxFileName,
-          lineNumber: 38,
+          lineNumber: 39,
           columnNumber: 5
         }
       }, /*#__PURE__*/_reactDefault.default.createElement("div", {
@@ -39039,7 +39055,7 @@ try {
         __self: this,
         __source: {
           fileName: _jsxFileName,
-          lineNumber: 39,
+          lineNumber: 40,
           columnNumber: 7
         }
       }, /*#__PURE__*/_reactDefault.default.createElement(_componentsForms.InputGroup, {
@@ -39051,7 +39067,7 @@ try {
         __self: this,
         __source: {
           fileName: _jsxFileName,
-          lineNumber: 40,
+          lineNumber: 41,
           columnNumber: 9
         }
       }), /*#__PURE__*/_reactDefault.default.createElement(_componentsForms.CronInputGroup, {
@@ -39062,7 +39078,7 @@ try {
         __self: this,
         __source: {
           fileName: _jsxFileName,
-          lineNumber: 47,
+          lineNumber: 48,
           columnNumber: 9
         }
       }), /*#__PURE__*/_reactDefault.default.createElement(_componentsForms.InputGroup, {
@@ -39073,7 +39089,7 @@ try {
         __self: this,
         __source: {
           fileName: _jsxFileName,
-          lineNumber: 53,
+          lineNumber: 54,
           columnNumber: 9
         }
       }), /*#__PURE__*/_reactDefault.default.createElement("button", {
@@ -39083,7 +39099,7 @@ try {
         __self: this,
         __source: {
           fileName: _jsxFileName,
-          lineNumber: 59,
+          lineNumber: 60,
           columnNumber: 9
         }
       }, isLoading ? "Creating..." : "Create and Commit Action")))
@@ -39091,30 +39107,44 @@ try {
   }
   _c = FormComponent;
   function HTMLFormik({onSubmit, status}) {
-    return (
-      /*#__PURE__*/_reactDefault.default.createElement(_formik.Formik, {
-        initialValues: initialValues,
-        validateOnChange: false,
-        validateOnBlur: false,
-        validationSchema: validationSchema,
-        component: props => /*#__PURE__*/_reactDefault.default.createElement(FormComponent, _extends({}, props, {
-          status: status,
+    if (status === "success") {
+      return (
+        /*#__PURE__*/_reactDefault.default.createElement(_reactRouterDom.Redirect, {
+          to: "/html-success",
           __self: this,
           __source: {
             fileName: _jsxFileName,
-            lineNumber: 78,
-            columnNumber: 29
+            lineNumber: 74,
+            columnNumber: 12
           }
-        })),
-        onSubmit: onSubmit,
-        __self: this,
-        __source: {
-          fileName: _jsxFileName,
-          lineNumber: 73,
-          columnNumber: 5
-        }
-      })
-    );
+        })
+      );
+    } else {
+      return (
+        /*#__PURE__*/_reactDefault.default.createElement(_formik.Formik, {
+          initialValues: initialValues,
+          validateOnChange: false,
+          validateOnBlur: false,
+          validationSchema: validationSchema,
+          component: props => /*#__PURE__*/_reactDefault.default.createElement(FormComponent, _extends({}, props, {
+            status: status,
+            __self: this,
+            __source: {
+              fileName: _jsxFileName,
+              lineNumber: 82,
+              columnNumber: 31
+            }
+          })),
+          onSubmit: onSubmit,
+          __self: this,
+          __source: {
+            fileName: _jsxFileName,
+            lineNumber: 77,
+            columnNumber: 7
+          }
+        })
+      );
+    }
   }
   _c2 = HTMLFormik;
   var _c, _c2;
@@ -39126,7 +39156,7 @@ try {
   window.$RefreshSig$ = prevRefreshSig;
 }
 
-},{"react":"3b2NM","formik":"67atH","yup":"0BxMn","cronstrue":"4yD8p","../components/forms":"3Zcis","@parcel/transformer-js/lib/esmodule-helpers.js":"5gA8y","../../../node_modules/@parcel/transformer-react-refresh-wrap/lib/helpers/helpers.js":"4Jj4f"}],"67atH":[function(require,module,exports) {
+},{"react":"3b2NM","formik":"67atH","yup":"0BxMn","cronstrue":"4yD8p","../components/forms":"3Zcis","@parcel/transformer-js/lib/esmodule-helpers.js":"5gA8y","../../../node_modules/@parcel/transformer-react-refresh-wrap/lib/helpers/helpers.js":"4Jj4f","react-router-dom":"1PMSK"}],"67atH":[function(require,module,exports) {
 "use strict";
 if ("development" === 'production') {
   module.exports = require('./formik.cjs.production.min.js');
@@ -59267,6 +59297,42 @@ var useHash = function () {
 };
 exports.useHash = useHash;
 
-},{"tslib":"5qqEx","react":"3b2NM","./useLifecycles":"5yZBn","./misc/util":"7IzxK"}]},["1j6wU","1JzX5","6RgfJ"], "6RgfJ", "parcelRequire9785")
+},{"tslib":"5qqEx","react":"3b2NM","./useLifecycles":"5yZBn","./misc/util":"7IzxK"}],"64LDg":[function(require,module,exports) {
+var helpers = require("../../../node_modules/@parcel/transformer-react-refresh-wrap/lib/helpers/helpers.js");
+var prevRefreshReg = window.$RefreshReg$;
+var prevRefreshSig = window.$RefreshSig$;
+helpers.prelude(module);
+try {
+  var _parcelHelpers = require("@parcel/transformer-js/lib/esmodule-helpers.js");
+  _parcelHelpers.defineInteropFlag(exports);
+  _parcelHelpers.export(exports, "CreateHTMLSuccess", function () {
+    return CreateHTMLSuccess;
+  });
+  var _react = require("react");
+  var _reactDefault = _parcelHelpers.interopDefault(_react);
+  var _jsxFileName = "/Users/mattrothenberg/workspace/github/flat/src/webview/pages/create-html-success.js";
+  function CreateHTMLSuccess() {
+    return (
+      /*#__PURE__*/_reactDefault.default.createElement("div", {
+        className: "alert alert-success",
+        __self: this,
+        __source: {
+          fileName: _jsxFileName,
+          lineNumber: 5,
+          columnNumber: 5
+        }
+      }, "Created and committed flat.yml 🎊! Push to GitHub to trigger the action.")
+    );
+  }
+  _c = CreateHTMLSuccess;
+  var _c;
+  $RefreshReg$(_c, "CreateHTMLSuccess");
+  helpers.postlude(module);
+} finally {
+  window.$RefreshReg$ = prevRefreshReg;
+  window.$RefreshSig$ = prevRefreshSig;
+}
+
+},{"react":"3b2NM","../../../node_modules/@parcel/transformer-react-refresh-wrap/lib/helpers/helpers.js":"4Jj4f","@parcel/transformer-js/lib/esmodule-helpers.js":"5gA8y"}]},["1j6wU","1JzX5","6RgfJ"], "6RgfJ", "parcelRequire9785")
 
 //# sourceMappingURL=index.js.map
