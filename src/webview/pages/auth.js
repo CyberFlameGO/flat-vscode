@@ -1,12 +1,12 @@
 import React from "react";
 
-import { AUTH_WITH_GITHUB } from "../constants";
+import { MESSAGES } from "../../constants";
 import { vscode } from "../lib";
 
 export function Auth() {
   const handleAuth = () => {
     vscode.postMessage({
-      command: AUTH_WITH_GITHUB,
+      command: MESSAGES.authWithGitHub,
     });
   };
 

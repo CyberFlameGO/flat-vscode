@@ -4,6 +4,7 @@ import { useEvent } from "react-use";
 
 import { SQLFormik } from "../components/sql-formik";
 import { vscode } from "../lib";
+import { MESSAGES } from "../../constants";
 
 export function CreateSQLWorkflow() {
   const [status, setStatus] = React.useState("idle");
@@ -11,7 +12,7 @@ export function CreateSQLWorkflow() {
   const handleMessage = (e) => {
     const message = e.data;
     switch (message.command) {
-      case "create-sql-success":
+      case MESSAGES.createSqlSuccess:
         setStatus("success");
     }
   };
@@ -20,7 +21,7 @@ export function CreateSQLWorkflow() {
 
   const handleSubmit = async (values) => {
     await vscode.postMessage({
-      command: "create-sql-workflow",
+      command: MESSAGES.createSqlWorkflow,
       payload: values,
     });
 

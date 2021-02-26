@@ -3,6 +3,7 @@ import { Link } from "react-router-dom";
 import { useEvent } from "react-use";
 
 import { HTTPFormik } from "../components/http-formik";
+import { MESSAGES } from "../../constants";
 import { vscode } from "../lib";
 
 export function CreateHTTPWorkflow() {
@@ -11,7 +12,7 @@ export function CreateHTTPWorkflow() {
   const handleMessage = (e) => {
     const message = e.data;
     switch (message.command) {
-      case "create-http-success":
+      case MESSAGES.createHttpSuccess:
         setStatus("success");
     }
   };
@@ -20,7 +21,7 @@ export function CreateHTTPWorkflow() {
 
   const handleSubmit = async (values) => {
     await vscode.postMessage({
-      command: "create-http-workflow",
+      command: MESSAGES.createHttpWorkflow,
       payload: values,
     });
 

@@ -3,6 +3,7 @@ import * as vscode from "vscode";
 import store from "../store";
 import { getNonce, testConnection } from "../lib";
 import { VSCodeGit } from "../git";
+import { MESSAGES } from "../constants";
 
 export class SidebarProvider implements vscode.WebviewViewProvider {
   _view?: vscode.WebviewView;
@@ -34,47 +35,51 @@ export class SidebarProvider implements vscode.WebviewViewProvider {
 
     webviewView.webview.onDidReceiveMessage(async (data) => {
       switch (data.command) {
-        case "auth-with-github":
+        case MESSAGES.authWithGitHub:
           await vscode.commands.executeCommand("flat.authWithGithub");
           await updateWebview();
           break;
-        case "test-connection-string":
+        case MESSAGES.testConnectionString:
           const { connstring } = data.payload;
           try {
             await testConnection(connstring);
             webviewView.webview.postMessage({
-              command: "database-connect-success",
+              command: MESSAGES.databaseConnectSuccess,
             });
           } catch (e) {
             webviewView.webview.postMessage({
-              command: "database-connect-error",
+              command: MESSAGES.databaseConnectError,
             });
           }
           break;
-        case "create-sql-workflow":
+        case MESSAGES.createSqlWorkflow:
           try {
             await vscode.commands.executeCommand(
               "flat.saveAndCommitSql",
               data.payload
             );
-            webviewView.webview.postMessage({ command: "create-sql-success" });
+            webviewView.webview.postMessage({
+              command: MESSAGES.createSqlSuccess,
+            });
           } catch (e) {
             webviewView.webview.postMessage({
-              command: "create-sql-error",
+              command: MESSAGES.createSqlError,
               payload: e,
             });
           }
           break;
-        case "create-http-workflow":
+        case MESSAGES.createHttpWorkflow:
           try {
             await vscode.commands.executeCommand(
               "flat.saveAndCommit",
               data.payload
             );
-            webviewView.webview.postMessage({ command: "create-http-success" });
+            webviewView.webview.postMessage({
+              command: MESSAGES.createHttpSuccess,
+            });
           } catch (e) {
             webviewView.webview.postMessage({
-              command: "create-http-error",
+              command: MESSAGES.createHttpError,
               payload: e,
             });
           }

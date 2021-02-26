@@ -48,7 +48,7 @@ jobs:
           type === "sql"
             ? `
         # After hitting "Save and Commit Action", you'll be prompted to write your SQL query.
-          queryfile: query.sql`
+        queryfile: query.sql`
             : "\n"
         }
 `.replace(/^\s*[\r\n]/gm, "");

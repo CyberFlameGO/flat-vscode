@@ -10,6 +10,7 @@ import {
   FormatInputGroup,
 } from "../components/forms";
 import { vscode } from "../lib";
+import { MESSAGES } from "../../constants";
 
 const initialValues = {
   source: "",
@@ -28,9 +29,9 @@ const validationSchema = yup.object().shape({
         return new Promise((resolve, reject) => {
           window.addEventListener("message", function (e) {
             const message = e.data;
-            if (message.command === "database-connect-success") {
+            if (message.command === MESSAGES.databaseConnectSuccess) {
               resolve();
-            } else if (message.command === "database-connect-error") {
+            } else if (message.command === MESSAGES.databaseConnectError) {
               reject();
             }
           });
@@ -38,7 +39,7 @@ const validationSchema = yup.object().shape({
       }
 
       vscode.postMessage({
-        command: "test-connection-string",
+        command: MESSAGES.testConnectionString,
         payload: {
           connstring: value,
         },
