@@ -2,15 +2,21 @@ import * as vscode from "vscode";
 import * as path from "path";
 import * as fs from "fs";
 
-import { VSCodeGit } from "../lib";
 import store from "../store";
 import { authWithGithub } from "./auth-with-github";
+import { VSCodeGit, makeActionYaml } from "../lib";
 
 const sodium = require("tweetsodium");
 
-export async function saveAndCommitSql() {
+interface Params {
+  cron: string;
+  source: string;
+  name: string;
+}
+
+export async function saveAndCommitSql(params: Params) {
   // Global state
-  const { connectionString, reset, octokit } = store.getState();
+  const { reset, octokit } = store.getState();
 
   const gitClient = new VSCodeGit();
   await gitClient.activateExtension();
@@ -19,6 +25,8 @@ export async function saveAndCommitSql() {
     authWithGithub();
     return;
   }
+
+  const { cron, source, name: actionName } = params;
 
   // Next, let's grab the repo name.
   const { name, owner } = gitClient.repoDetails;
@@ -32,7 +40,7 @@ export async function saveAndCommitSql() {
   const key = keyRes.data.key;
 
   // Convert the message and key to Uint8Array's (Buffer implements that interface)
-  const messageBytes = Buffer.from(connectionString);
+  const messageBytes = Buffer.from(source);
   const keyBytes = Buffer.from(key, "base64");
 
   // Encrypt using LibSodium.
@@ -58,14 +66,12 @@ export async function saveAndCommitSql() {
   }
 
   // In any event, let's go ahead and commit the YAML.
-  const editor = vscode.window.activeTextEditor;
-
-  if (!editor) {
-    return;
-  }
-
-  const { document } = editor;
-  const action = document.getText();
+  const actionYaml = makeActionYaml({
+    type: "sql",
+    name: actionName,
+    source,
+    cron,
+  });
 
   const folders = vscode.workspace.workspaceFolders;
 
@@ -79,16 +85,11 @@ export async function saveAndCommitSql() {
   // Write file
   const workflowsDir = path.join(rootPath.uri.path, ".github/workflows");
   fs.mkdirSync(workflowsDir, { recursive: true });
-  fs.writeFileSync(path.join(workflowsDir, "flat.yaml"), action);
+  fs.writeFileSync(path.join(workflowsDir, "flat.yaml"), actionYaml);
 
   // Add and commit.
   await gitClient.add([vscode.Uri.parse(path.join(workflowsDir, "flat.yaml"))]);
   await gitClient.commit("feat: add flat.yaml workflow");
-  await vscode.commands.executeCommand("workbench.action.closeActiveEditor");
-
-  vscode.window.showInformationMessage(
-    "Created and committed flat.yml 🎊! Write your SQL query."
-  );
 
   // Write SQL file
   const sqlPath = path.join(workflowsDir, "query.sql");

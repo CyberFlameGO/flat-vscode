@@ -11,6 +11,7 @@ interface Params {
 }
 
 export const saveAndCommit = async (params: Params) => {
+  console.log("saving and committing HTML");
   // Initialize git client.
   const gitClient = new VSCodeGit();
   await gitClient.activateExtension();

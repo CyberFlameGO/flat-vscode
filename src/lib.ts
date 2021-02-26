@@ -1,9 +1,10 @@
 import * as vscode from "vscode";
 import { URL } from "url";
+import { ConnectionString } from "connection-string";
+import { createConnection } from "typeorm";
 
 import { GitAPI } from "./types";
 import { flatDecoration } from "./decorations";
-import { resolve } from "path";
 
 const GitUrlParse = require("git-url-parse");
 
@@ -282,4 +283,31 @@ export function getNonce() {
     text += possible.charAt(Math.floor(Math.random() * possible.length));
   }
   return text;
+}
+
+export async function testConnection(connectionString: string) {
+  try {
+    const parsed = new ConnectionString(connectionString);
+    const protocol = parsed.protocol;
+
+    if (!protocol) {
+      throw new Error("Unable to connect to database.");
+    }
+
+    // @ts-ignore
+    const connection = await createConnection({
+      type: protocol,
+      url: connectionString,
+      ssl: true,
+      extra: {
+        ssl: {
+          rejectUnauthorized: false,
+        },
+      },
+    });
+
+    await connection.close();
+  } catch (e) {
+    throw e;
+  }
 }

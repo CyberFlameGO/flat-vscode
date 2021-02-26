@@ -4,6 +4,7 @@ import { BrowserRouter as Router, Switch, Route, Link } from "react-router-dom";
 import { CreateSQLWorkflow } from "../pages/create-sql-workflow";
 import { CreateHTMLWorkflow } from "../pages/create-html-workflow";
 import { CreateHTMLSuccess } from "../pages/create-html-success";
+import { CreateSQLSuccess } from "../pages/create-sql-success";
 
 function Home() {
   return (
@@ -36,6 +37,9 @@ export function CreateWorkflow() {
       <Switch>
         <Route path="/sql">
           <CreateSQLWorkflow />
+        </Route>
+        <Route path="/sql-success">
+          <CreateSQLSuccess />
         </Route>
         <Route path="/html">
           <CreateHTMLWorkflow />

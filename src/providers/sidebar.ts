@@ -1,8 +1,7 @@
 import * as vscode from "vscode";
 
-import { getNonce } from "../lib";
 import store from "../store";
-import { VSCodeGit } from "../lib";
+import { getNonce, testConnection, VSCodeGit } from "../lib";
 
 export class SidebarProvider implements vscode.WebviewViewProvider {
   _view?: vscode.WebviewView;
@@ -37,8 +36,36 @@ export class SidebarProvider implements vscode.WebviewViewProvider {
         case "auth-with-github":
           await vscode.commands.executeCommand("flat.authWithGithub");
           await updateWebview();
+          break;
+        case "test-connection-string":
+          const { connstring } = data.payload;
+          try {
+            await testConnection(connstring);
+            webviewView.webview.postMessage({
+              command: "database-connect-success",
+            });
+          } catch (e) {
+            console.log(e);
+            webviewView.webview.postMessage({
+              command: "database-connect-error",
+            });
+          }
+          break;
+        case "create-sql-workflow":
+          try {
+            await vscode.commands.executeCommand(
+              "flat.saveAndCommitSql",
+              data.payload
+            );
+            webviewView.webview.postMessage({ command: "create-sql-success" });
+          } catch (e) {
+            webviewView.webview.postMessage({
+              command: "create-sql-error",
+              payload: e,
+            });
+          }
+          break;
         case "create-html-workflow":
-          console.log("Creating html workflow", data.payload);
           try {
             await vscode.commands.executeCommand(
               "flat.saveAndCommit",
@@ -51,6 +78,7 @@ export class SidebarProvider implements vscode.WebviewViewProvider {
               payload: e,
             });
           }
+          break;
       }
     });
   }
