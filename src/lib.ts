@@ -3,6 +3,7 @@ import { URL } from "url";
 
 import { GitAPI } from "./types";
 import { flatDecoration } from "./decorations";
+import { resolve } from "path";
 
 const GitUrlParse = require("git-url-parse");
 
@@ -85,6 +86,31 @@ export class VSCodeGit {
   get rawGit() {
     // Unsure about this magic number, but it works.
     return this.extension.exports.getAPI(1);
+  }
+
+  waitForRepo(times: number): Promise<{ name: string; owner: string }> {
+    let count = 0;
+
+    return new Promise((resolve, reject) => {
+      const checkRepoExists = setInterval(() => {
+        const remotes = this.repository._repository.remotes;
+        if (remotes.length > 0) {
+          const remote = remotes[0];
+          const parsed = GitUrlParse(remote.pushUrl);
+          clearInterval(checkRepoExists);
+          resolve({
+            name: parsed.name,
+            owner: parsed.owner,
+          });
+        } else {
+          if (count === times) {
+            clearInterval(checkRepoExists);
+            reject(new Error("Couldnt get repo details"));
+          }
+          count++;
+        }
+      }, 1000);
+    });
   }
 
   get repoDetails() {

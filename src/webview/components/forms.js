@@ -49,16 +49,34 @@ export function InputGroup({
   );
 }
 
+const defaultSchedules = {
+  fiveMinutes: "* * * * *",
+  hour: "0 * * * *",
+  day: "0 0 * * * ",
+};
+
+const scheduleValues = Object.values(defaultSchedules);
+
 export function CronInputGroup({ id, label, name, description }) {
+  const [showCustom, setShowCustom] = React.useState(false);
   const [field, meta, helpers] = useField(name);
   const [customCron, setCustomCron] = React.useState("");
 
+  React.useEffect(() => {
+    if (scheduleValues.includes(field.value)) {
+      setShowCustom(false);
+      setCustomCron("");
+    }
+  }, [field.value]);
+
   const handleCustomCronChange = (e) => {
     setCustomCron(e.target.value);
+    helpers.setValue(e.target.value);
   };
 
-  const handleSaveCustomCron = () => {
-    helpers.setValue(customCron);
+  const handleOtherChange = (e) => {
+    helpers.setValue("");
+    setShowCustom(true);
   };
 
   return (
@@ -67,28 +85,41 @@ export function CronInputGroup({ id, label, name, description }) {
       <div className="space-y-4 mt-2">
         <div className="flex items-center space-x-4" role="group">
           <label className="flex items-center space-x-1">
-            <Field type="radio" name={name} value="* * * * *" />
+            <Field
+              type="radio"
+              name={name}
+              value={defaultSchedules.fiveMinutes}
+            />
             <span>Five Minutes</span>
           </label>
           <label className="flex items-center space-x-1">
-            <Field type="radio" name={name} value="0 * * * *" />
+            <Field type="radio" name={name} value={defaultSchedules.hour} />
             <span>Hour</span>
           </label>
           <label className="flex items-center space-x-1">
-            <Field type="radio" name={name} value="0 0 * * *" />
+            <Field type="radio" name={name} value={defaultSchedules.day} />
             <span>Day</span>
           </label>
+          <label className="flex items-center space-x-1">
+            <input
+              onChange={handleOtherChange}
+              type="radio"
+              name="other"
+              checked={showCustom}
+            />
+            <span>Other</span>
+          </label>
         </div>
-        <div className="space-y-2">
-          <p className="mt-1 text-xs opacity-50">
-            Or, use a custom CRON schedule (
-            <a className="text-underline" href="https://crontab.guru/">
-              Need help?
-            </a>
-            )
-          </p>
-          <div className="flex space-x-2">
-            <div className="flex-1">
+        {showCustom && (
+          <div className="space-y-2">
+            <p className="mt-1 text-xs opacity-50">
+              Enter a custom CRON schedule (
+              <a className="text-underline" href="https://crontab.guru/">
+                Need help?
+              </a>
+              )
+            </p>
+            <div className="flex">
               <input
                 value={customCron}
                 onChange={handleCustomCronChange}
@@ -97,15 +128,8 @@ export function CronInputGroup({ id, label, name, description }) {
                 type="text"
               />
             </div>
-            <button
-              type="button"
-              onClick={handleSaveCustomCron}
-              className="btn btn-secondary"
-            >
-              Save
-            </button>
           </div>
-        </div>
+        )}
       </div>
       <ErrorMessage className="form-error" component="p" name={name} />
     </div>

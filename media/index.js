@@ -52921,22 +52921,37 @@ try {
     );
   }
   _c2 = InputGroup;
+  const defaultSchedules = {
+    fiveMinutes: "* * * * *",
+    hour: "0 * * * *",
+    day: "0 0 * * * "
+  };
+  const scheduleValues = Object.values(defaultSchedules);
   function CronInputGroup({id, label, name, description}) {
     _s();
+    const [showCustom, setShowCustom] = _reactDefault.default.useState(false);
     const [field, meta, helpers] = _formik.useField(name);
     const [customCron, setCustomCron] = _reactDefault.default.useState("");
+    _reactDefault.default.useEffect(() => {
+      if (scheduleValues.includes(field.value)) {
+        setShowCustom(false);
+        setCustomCron("");
+      }
+    }, [field.value]);
     const handleCustomCronChange = e => {
       setCustomCron(e.target.value);
+      helpers.setValue(e.target.value);
     };
-    const handleSaveCustomCron = () => {
-      helpers.setValue(customCron);
+    const handleOtherChange = e => {
+      helpers.setValue("");
+      setShowCustom(true);
     };
     return (
       /*#__PURE__*/_reactDefault.default.createElement("div", {
         __self: this,
         __source: {
           fileName: _jsxFileName,
-          lineNumber: 65,
+          lineNumber: 83,
           columnNumber: 5
         }
       }, /*#__PURE__*/_reactDefault.default.createElement(InputGroupHeader, {
@@ -52946,7 +52961,7 @@ try {
         __self: this,
         __source: {
           fileName: _jsxFileName,
-          lineNumber: 66,
+          lineNumber: 84,
           columnNumber: 7
         }
       }), /*#__PURE__*/_reactDefault.default.createElement("div", {
@@ -52954,7 +52969,7 @@ try {
         __self: this,
         __source: {
           fileName: _jsxFileName,
-          lineNumber: 67,
+          lineNumber: 85,
           columnNumber: 7
         }
       }, /*#__PURE__*/_reactDefault.default.createElement("div", {
@@ -52963,7 +52978,7 @@ try {
         __self: this,
         __source: {
           fileName: _jsxFileName,
-          lineNumber: 68,
+          lineNumber: 86,
           columnNumber: 9
         }
       }, /*#__PURE__*/_reactDefault.default.createElement("label", {
@@ -52971,24 +52986,24 @@ try {
         __self: this,
         __source: {
           fileName: _jsxFileName,
-          lineNumber: 69,
+          lineNumber: 87,
           columnNumber: 11
         }
       }, /*#__PURE__*/_reactDefault.default.createElement(_formik.Field, {
         type: "radio",
         name: name,
-        value: "* * * * *",
+        value: defaultSchedules.fiveMinutes,
         __self: this,
         __source: {
           fileName: _jsxFileName,
-          lineNumber: 70,
+          lineNumber: 88,
           columnNumber: 13
         }
       }), /*#__PURE__*/_reactDefault.default.createElement("span", {
         __self: this,
         __source: {
           fileName: _jsxFileName,
-          lineNumber: 71,
+          lineNumber: 93,
           columnNumber: 13
         }
       }, "Five Minutes")), /*#__PURE__*/_reactDefault.default.createElement("label", {
@@ -52996,24 +53011,24 @@ try {
         __self: this,
         __source: {
           fileName: _jsxFileName,
-          lineNumber: 73,
+          lineNumber: 95,
           columnNumber: 11
         }
       }, /*#__PURE__*/_reactDefault.default.createElement(_formik.Field, {
         type: "radio",
         name: name,
-        value: "0 * * * *",
+        value: defaultSchedules.hour,
         __self: this,
         __source: {
           fileName: _jsxFileName,
-          lineNumber: 74,
+          lineNumber: 96,
           columnNumber: 13
         }
       }), /*#__PURE__*/_reactDefault.default.createElement("span", {
         __self: this,
         __source: {
           fileName: _jsxFileName,
-          lineNumber: 75,
+          lineNumber: 97,
           columnNumber: 13
         }
       }, "Hour")), /*#__PURE__*/_reactDefault.default.createElement("label", {
@@ -53021,65 +53036,83 @@ try {
         __self: this,
         __source: {
           fileName: _jsxFileName,
-          lineNumber: 77,
+          lineNumber: 99,
           columnNumber: 11
         }
       }, /*#__PURE__*/_reactDefault.default.createElement(_formik.Field, {
         type: "radio",
         name: name,
-        value: "0 0 * * *",
+        value: defaultSchedules.day,
         __self: this,
         __source: {
           fileName: _jsxFileName,
-          lineNumber: 78,
+          lineNumber: 100,
           columnNumber: 13
         }
       }), /*#__PURE__*/_reactDefault.default.createElement("span", {
         __self: this,
         __source: {
           fileName: _jsxFileName,
-          lineNumber: 79,
+          lineNumber: 101,
           columnNumber: 13
         }
-      }, "Day"))), /*#__PURE__*/_reactDefault.default.createElement("div", {
+      }, "Day")), /*#__PURE__*/_reactDefault.default.createElement("label", {
+        className: "flex items-center space-x-1",
+        __self: this,
+        __source: {
+          fileName: _jsxFileName,
+          lineNumber: 103,
+          columnNumber: 11
+        }
+      }, /*#__PURE__*/_reactDefault.default.createElement("input", {
+        onChange: handleOtherChange,
+        type: "radio",
+        name: "other",
+        checked: showCustom,
+        __self: this,
+        __source: {
+          fileName: _jsxFileName,
+          lineNumber: 104,
+          columnNumber: 13
+        }
+      }), /*#__PURE__*/_reactDefault.default.createElement("span", {
+        __self: this,
+        __source: {
+          fileName: _jsxFileName,
+          lineNumber: 110,
+          columnNumber: 13
+        }
+      }, "Other"))), showCustom && /*#__PURE__*/_reactDefault.default.createElement("div", {
         className: "space-y-2",
         __self: this,
         __source: {
           fileName: _jsxFileName,
-          lineNumber: 82,
-          columnNumber: 9
+          lineNumber: 114,
+          columnNumber: 11
         }
       }, /*#__PURE__*/_reactDefault.default.createElement("p", {
         className: "mt-1 text-xs opacity-50",
         __self: this,
         __source: {
           fileName: _jsxFileName,
-          lineNumber: 83,
-          columnNumber: 11
+          lineNumber: 115,
+          columnNumber: 13
         }
-      }, "Or, use a custom CRON schedule (", /*#__PURE__*/_reactDefault.default.createElement("a", {
+      }, "Enter a custom CRON schedule (", /*#__PURE__*/_reactDefault.default.createElement("a", {
         className: "text-underline",
         href: "https://crontab.guru/",
         __self: this,
         __source: {
           fileName: _jsxFileName,
-          lineNumber: 85,
-          columnNumber: 13
+          lineNumber: 117,
+          columnNumber: 15
         }
       }, "Need help?"), ")"), /*#__PURE__*/_reactDefault.default.createElement("div", {
-        className: "flex space-x-2",
+        className: "flex",
         __self: this,
         __source: {
           fileName: _jsxFileName,
-          lineNumber: 90,
-          columnNumber: 11
-        }
-      }, /*#__PURE__*/_reactDefault.default.createElement("div", {
-        className: "flex-1",
-        __self: this,
-        __source: {
-          fileName: _jsxFileName,
-          lineNumber: 91,
+          lineNumber: 122,
           columnNumber: 13
         }
       }, /*#__PURE__*/_reactDefault.default.createElement("input", {
@@ -53091,33 +53124,23 @@ try {
         __self: this,
         __source: {
           fileName: _jsxFileName,
-          lineNumber: 92,
+          lineNumber: 123,
           columnNumber: 15
         }
-      })), /*#__PURE__*/_reactDefault.default.createElement("button", {
-        type: "button",
-        onClick: handleSaveCustomCron,
-        className: "btn btn-secondary",
-        __self: this,
-        __source: {
-          fileName: _jsxFileName,
-          lineNumber: 100,
-          columnNumber: 13
-        }
-      }, "Save")))), /*#__PURE__*/_reactDefault.default.createElement(_formik.ErrorMessage, {
+      })))), /*#__PURE__*/_reactDefault.default.createElement(_formik.ErrorMessage, {
         className: "form-error",
         component: "p",
         name: name,
         __self: this,
         __source: {
           fileName: _jsxFileName,
-          lineNumber: 110,
+          lineNumber: 134,
           columnNumber: 7
         }
       }))
     );
   }
-  _s(CronInputGroup, "yy0/BVHjzU3UVNJEiW6smFfNbSc=", false, function () {
+  _s(CronInputGroup, "mvEMjfckM4mVxt9IrpmMK2gAWJI=", false, function () {
     return [_formik.useField];
   });
   _c3 = CronInputGroup;

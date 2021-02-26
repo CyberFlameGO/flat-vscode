@@ -77,7 +77,7 @@ export class SidebarProvider implements vscode.WebviewViewProvider {
       owner = "";
 
     try {
-      const details = gitClient.repoDetails;
+      const details = await gitClient.waitForRepo(3);
       name = details.name;
       owner = details.owner;
     } catch (e) {
