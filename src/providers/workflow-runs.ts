@@ -3,7 +3,7 @@ import { Endpoints } from "@octokit/types";
 import * as vscode from "vscode";
 import { formatRelative, differenceInSeconds } from "date-fns";
 
-import { VSCodeGit } from "../lib";
+import { VSCodeGit } from "../git";
 
 type listWorkflowRunsResponse = Endpoints["GET /repos/{owner}/{repo}/actions/runs"]["response"];
 type listWorkflowJobsResponse = Endpoints["GET /repos/{owner}/{repo}/actions/runs/{run_id}/jobs"]["response"];
@@ -27,15 +27,11 @@ function calculateStepDirection(step: Step) {
   );
 }
 
-// https://github.com/codespaces-contrib/gitdoc/blob/4b01e2d119d703f029d9ad5c3e28c87a3d5ac74b/src/extension.ts#L26
-// TODO: Refactor via
 async function waitForRepo(
   gitClient: VSCodeGit
 ): Promise<{ name: string; owner: string }> {
   let name = "",
     owner = "";
-  // WARNING: HACK AHEAD!
-
   return new Promise((resolve) => {
     const checkRepoExists = setInterval(() => {
       const details = gitClient.repoDetails;

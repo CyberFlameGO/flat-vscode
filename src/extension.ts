@@ -1,41 +1,38 @@
 import * as vscode from "vscode";
 
-import { WorkflowRunsProvider, FlatProvider } from "./providers";
-import {
-  createAction,
-  saveAndCommit,
-  saveAndCommitSql,
-  authWithGithub,
-} from "./commands";
+import { SidebarProvider } from "./providers";
+import { saveAndCommit, saveAndCommitSql, authWithGithub } from "./commands";
 import store from "./store";
 
 export async function activate(context: vscode.ExtensionContext) {
-  const scheme = "flat";
-
+  const { reset } = store.getState();
   await authWithGithub();
 
-  const { octokit } = store.getState();
+  const sidebarProvider = new SidebarProvider(context.extensionUri);
 
-  if (octokit) {
-    vscode.window.registerTreeDataProvider(
-      "workflowRuns",
-      new WorkflowRunsProvider(octokit)
-    );
-  }
+  context.subscriptions.push(
+    vscode.window.registerWebviewViewProvider("flat-sidebar", sidebarProvider)
+  );
 
   context.subscriptions.push(
     vscode.commands.registerCommand("flat.saveAndCommitSql", saveAndCommitSql)
   );
 
   context.subscriptions.push(
-    vscode.workspace.registerTextDocumentContentProvider(
-      scheme,
-      new FlatProvider()
-    )
+    vscode.authentication.onDidChangeSessions(async (e) => {
+      // We can probably assume that if you removed an identity and it was GitHub, it was you signing out
+      // @ts-ignore
+      if (e.removed.length > 0 && e.provider.id === "github") {
+        reset();
+        await sidebarProvider.refresh();
+      }
+    })
   );
 
   context.subscriptions.push(
-    vscode.commands.registerCommand("flat.createAction", createAction)
+    vscode.commands.registerCommand("flat.authWithGithub", () =>
+      authWithGithub(true)
+    )
   );
 
   context.subscriptions.push(

@@ -15,44 +15,40 @@
   ],
   "main": "./out/extension.js",
   "contributes": {
-    "menus": {
-      "editor/title": [
+    "viewsContainers": {
+      "activitybar": [
         {
-          "command": "flat.saveAndCommit",
-          "group": "navigation",
-          "when": "resourceScheme == flat && flat:actionType == 'html'"
-        },
+          "id": "flat",
+          "title": "Flat",
+          "icon": "media/flat.svg"
+        }
+      ]
+    },
+    "views": {
+      "flat": [
         {
-          "command": "flat.saveAndCommitSql",
-          "group": "navigation",
-          "when": "resourceScheme == flat && flat:actionType == 'sql'"
+          "type": "webview",
+          "id": "flat-sidebar",
+          "name": "Flat",
+          "icon": "media/flat.svg",
+          "contextualTitle": "Flat"
         }
       ]
     },
     "commands": [
       {
-        "command": "flat.createAction",
-        "title": "Create Action"
-      },
-      {
         "command": "flat.saveAndCommit",
-        "title": "Save and Commit Action"
+        "title": "Flat: Save and Commit Action"
       },
       {
         "command": "flat.saveAndCommitSql",
-        "title": "Save and Commit Action"
+        "title": "Flat: Save and Commit Action"
+      },
+      {
+        "command": "flat.authWithGithub",
+        "title": "Flat: Auth with GitHub"
       }
-    ],
-    "views": {
-      "explorer": [
-        {
-          "id": "workflowRuns",
-          "name": "Workflow Runs",
-          "contextualTitle": "Flat: Workflow Runs",
-          "when": "flat:authedWithGithub == true"
-        }
-      ]
-    }
+    ]
   },
   "scripts": {
     "vscode:prepublish": "yarn run compile",
@@ -60,20 +56,32 @@
     "watch": "tsc -watch -p ./",
     "pretest": "yarn run compile && yarn run lint",
     "lint": "eslint src --ext ts",
-    "test": "node ./out/test/runTest.js"
+    "test": "node ./out/test/runTest.js",
+    "dev": "parcel src/webview/index.js --dist-dir ./media"
   },
   "devDependencies": {
+    "@parcel/optimizer-cssnano": "2.0.0-nightly.610",
+    "@parcel/packager-css": "2.0.0-nightly.610",
+    "@parcel/transformer-css": "2.0.0-nightly.610",
+    "@parcel/transformer-postcss": "2.0.0-nightly.610",
+    "@tailwindcss/forms": "^0.2.1",
     "@types/glob": "^7.1.3",
     "@types/mocha": "^8.0.4",
     "@types/node": "^12.11.7",
     "@types/vscode": "^1.53.0",
     "@typescript-eslint/eslint-plugin": "^4.14.1",
     "@typescript-eslint/parser": "^4.14.1",
+    "add": "^2.0.6",
+    "autoprefixer": "^10.2.4",
     "eslint": "^7.19.0",
     "glob": "^7.1.6",
     "mocha": "^8.2.1",
+    "parcel": "^2.0.0-nightly.608",
+    "postcss-nested": "^5.0.3",
+    "tailwindcss": "^2.0.3",
     "typescript": "^4.1.3",
-    "vscode-test": "^1.5.0"
+    "vscode-test": "^1.5.0",
+    "yarn": "^1.22.10"
   },
   "dependencies": {
     "@octokit/rest": "^18.1.0",
@@ -81,11 +89,18 @@
     "connection-string": "^4.3.2",
     "cronstrue": "^1.109.0",
     "date-fns": "^2.17.0",
+    "formik": "^2.2.6",
     "git-url-parse": "^11.4.4",
     "pg": "^8.5.1",
-    "query-string": "^6.14.0",
+    "postcss": "^8.2.6",
+    "react": "^17.0.1",
+    "react-dom": "^17.0.1",
+    "react-query": "^3.12.0",
+    "react-router-dom": "^5.2.0",
+    "react-use": "^17.1.1",
     "tweetsodium": "^0.0.5",
     "typeorm": "^0.2.31",
+    "yup": "^0.32.9",
     "zustand": "^3.3.2"
   }
 }

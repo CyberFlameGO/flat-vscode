@@ -1,6 +1,11 @@
 out
 dist
 node_modules
+.parcel-cache
 .vscode-test/
 *.vsix
 yarn-error.log
+media/index.css
+media/index.css.map
+media/index.js
+media/index.js.map
