@@ -1599,6 +1599,11 @@
     chrome-trace-event "^1.0.2"
     nullthrows "^1.1.1"
 
+"@primer/octicons-react@^12.1.0":
+  version "12.1.0"
+  resolved "https://registry.yarnpkg.com/@primer/octicons-react/-/octicons-react-12.1.0.tgz#7556450199e0c10e72e99dd02c59f1ac33544767"
+  integrity sha512-eb/5Obsp6/pVkyzzGhobK6aPAkKqx6VleF/7HYeihGTYm3rGZc+prL/jhxD5Mo1P6U343YEkHjc2gKuvtENn1g==
+
 "@reach/accordion@^0.13.2":
   version "0.13.2"
   resolved "https://registry.yarnpkg.com/@reach/accordion/-/accordion-0.13.2.tgz#0fd6ac089df685bf092233b4a1efcec123fcc377"

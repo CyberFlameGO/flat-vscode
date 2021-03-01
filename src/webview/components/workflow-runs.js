@@ -8,6 +8,7 @@ import {
 } from "@reach/accordion";
 import "@reach/accordion/styles.css";
 import { formatRelative } from "date-fns";
+import { ChevronDownIcon, ChevronUpIcon } from "@primer/octicons-react";
 
 import { useRun, useWorkflowRuns } from "../hooks";
 import { capitalize } from "../lib";
@@ -43,6 +44,24 @@ function RunDetails({ id }) {
   );
 }
 
+function CustomAccordionButton({ run }) {
+  const { isExpanded } = useAccordionItemContext();
+  return (
+    <AccordionButton className="w-full text-left h-8 focus:outline-none focus:ring">
+      <div className="flex items-center justify-between">
+        {makeWorkflowLabel(run)}
+        <span className="opacity-40">
+          {isExpanded ? (
+            <ChevronUpIcon size={16} />
+          ) : (
+            <ChevronDownIcon size={16} />
+          )}
+        </span>
+      </div>
+    </AccordionButton>
+  );
+}
+
 export function WorkflowRuns() {
   const { data, isLoading, isSuccess } = useWorkflowRuns();
 
@@ -63,9 +82,7 @@ export function WorkflowRuns() {
             {workflow_runs.map((run) => {
               return (
                 <AccordionItem key={run.id}>
-                  <AccordionButton className="w-full text-left h-8 focus:outline-none focus:ring">
-                    {makeWorkflowLabel(run)}
-                  </AccordionButton>
+                  <CustomAccordionButton run={run} />
                   <AccordionPanel>
                     <RunDetails id={run.id} />
                   </AccordionPanel>
