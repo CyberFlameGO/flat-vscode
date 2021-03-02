@@ -102,7 +102,7 @@ export class SidebarProvider implements vscode.WebviewViewProvider {
     const stylesPath = vscode.Uri.joinPath(
       this._extensionUri,
       "media",
-      "index.css"
+      "webview.css"
     );
 
     const stylesUri = webview.asWebviewUri(stylesPath);
@@ -110,7 +110,7 @@ export class SidebarProvider implements vscode.WebviewViewProvider {
     const scriptPathOnDisk = vscode.Uri.joinPath(
       this._extensionUri,
       "media",
-      "index.js"
+      "webview.js"
     );
 
     const scriptUri = webview.asWebviewUri(scriptPathOnDisk);
@@ -125,7 +125,8 @@ export class SidebarProvider implements vscode.WebviewViewProvider {
       name = details.name;
       owner = details.owner;
     } catch (e) {
-      console.error("no upstream, wtf?", e);
+      name = "";
+      owner = "";
     }
 
     const initialAppState = {
@@ -137,21 +138,21 @@ export class SidebarProvider implements vscode.WebviewViewProvider {
     };
 
     return `<!DOCTYPE html>
-			<html lang="en">
-			<head>
-				<meta charset="UTF-8">        
-				<meta name="viewport" content="width=device-width, initial-scale=1.0">
+    	<html lang="en">
+    	<head>
+    		<meta charset="UTF-8">
+    		<meta name="viewport" content="width=device-width, initial-scale=1.0">
         <meta http-equiv="Content-Security-Policy" content="default-src 'none'; style-src ${
           webview.cspSource
         }; img-src ${
       webview.cspSource
     } 'self' data: https:; script-src 'nonce-${nonce}'; connect-src https://api.github.com;">
         <link href="${stylesUri}" rel="stylesheet">
-			</head>
+    	</head>
       <body>
-				<div data-state=${JSON.stringify(initialAppState)} id="app"></div>
+    		<div data-state=${JSON.stringify(initialAppState)} id="app"></div>
         <script nonce="${nonce}" src="${scriptUri}"></script>
-			</body>
-			</html>`;
+    	</body>
+    	</html>`;
   }
 }

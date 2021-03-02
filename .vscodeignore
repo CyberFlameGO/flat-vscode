@@ -1,6 +1,5 @@
 .vscode/**
 .vscode-test/**
-out/test/**
 src/**
 .gitignore
 .yarnrc
@@ -11,3 +10,5 @@ vsc-extension-quickstart.md
 **/*.ts
 node_modules
 .parcel-cache
+tailwind.config.json
+webpack.config.js
