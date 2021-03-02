@@ -2,6 +2,9 @@
   "name": "flat",
   "displayName": "flat",
   "publisher": "GitHubOCTO",
+  "repository": {
+    "url": "https://github.com/githubocto/flat-vscode"
+  },
   "description": "",
   "version": "0.0.1",
   "engines": {
@@ -13,7 +16,14 @@
   "activationEvents": [
     "*"
   ],
-  "main": "./out/extension.js",
+  "main": "./dist/extension.js",
+  "webview": "./src/webview/index.js",
+  "targets": {
+    "main": false,
+    "webview": {
+      "distDir": "media"
+    }
+  },
   "contributes": {
     "viewsContainers": {
       "activitybar": [
@@ -52,12 +62,15 @@
   },
   "scripts": {
     "vscode:prepublish": "yarn run compile",
-    "compile": "tsc -p ./",
+    "webpack:build": "webpack",
+    "ts:compile": "tsc -p ./",
+    "compile": "run-s ts:compile webpack:build webview:build",
     "watch": "tsc -watch -p ./",
     "pretest": "yarn run compile && yarn run lint",
     "lint": "eslint src --ext ts",
     "test": "node ./out/test/runTest.js",
-    "dev": "parcel src/webview/index.js --dist-dir ./media"
+    "dev": "parcel src/webview/index.js --dist-dir ./media",
+    "webview:build": "parcel build src/webview/index.js"
   },
   "devDependencies": {
     "@parcel/optimizer-cssnano": "2.0.0-nightly.610",
@@ -76,11 +89,15 @@
     "eslint": "^7.19.0",
     "glob": "^7.1.6",
     "mocha": "^8.2.1",
+    "npm-run-all": "^4.1.5",
     "parcel": "^2.0.0-nightly.608",
     "postcss-nested": "^5.0.3",
     "tailwindcss": "^2.0.3",
     "typescript": "^4.1.3",
     "vscode-test": "^1.5.0",
+    "webpack": "^5.24.2",
+    "webpack-cli": "^4.5.0",
+    "webpack-filter-warnings-plugin": "^1.2.1",
     "yarn": "^1.22.10"
   },
   "dependencies": {
@@ -100,7 +117,7 @@
     "react-query": "^3.12.0",
     "react-router-dom": "^5.2.0",
     "react-use": "^17.1.1",
-    "tweetsodium": "^0.0.5",
+    "tweetsodium": "^0.0.4",
     "typeorm": "^0.2.31",
     "yup": "^0.32.9",
     "zustand": "^3.3.2"
