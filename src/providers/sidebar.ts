@@ -4,7 +4,6 @@ import store from "../store";
 import { getNonce, testConnection } from "../lib";
 import { VSCodeGit } from "../git";
 import { MESSAGES } from "../constants";
-import { ReturningStatementNotSupportedError } from "typeorm";
 
 export class SidebarProvider implements vscode.WebviewViewProvider {
   _view?: vscode.WebviewView;
@@ -33,10 +32,6 @@ export class SidebarProvider implements vscode.WebviewViewProvider {
     };
 
     await updateWebview();
-
-    await vscode.window.showInformationMessage(
-      "made it pas the first update step"
-    );
 
     webviewView.webview.onDidReceiveMessage(async (data) => {
       switch (data.command) {
@@ -130,8 +125,8 @@ export class SidebarProvider implements vscode.WebviewViewProvider {
       name = details.name;
       owner = details.owner;
     } catch (e) {
-      console.error("no upstream, wtf?", e);
-      throw new Error();
+      name = "";
+      owner = "";
     }
 
     const initialAppState = {
