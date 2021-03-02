@@ -102,7 +102,7 @@ export class SidebarProvider implements vscode.WebviewViewProvider {
     const stylesPath = vscode.Uri.joinPath(
       this._extensionUri,
       "media",
-      "index.css"
+      "webview.css"
     );
 
     const stylesUri = webview.asWebviewUri(stylesPath);
@@ -110,7 +110,7 @@ export class SidebarProvider implements vscode.WebviewViewProvider {
     const scriptPathOnDisk = vscode.Uri.joinPath(
       this._extensionUri,
       "media",
-      "index.js"
+      "webview.js"
     );
 
     const scriptUri = webview.asWebviewUri(scriptPathOnDisk);

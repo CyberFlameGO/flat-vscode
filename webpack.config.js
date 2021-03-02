@@ -7,12 +7,12 @@ module.exports = {
   mode: "production",
   entry: "./out/extension.js",
   output: {
-    filename: "main.js",
-    path: path.resolve(__dirname, "dist"),
+    filename: "extension.js",
+    path: path.resolve(__dirname, "out"),
   },
   devtool: "source-map",
   externals: {
-    vscode: "commonjs vscode", // the vscode-module is created on-the-fly and must be excluded. Add other modules that cannot be webpack'ed, 📖 -> https://webpack.js.org/configuration/externals/
+    vscode: "commonjs vscode",
   },
   resolve: {
     // support reading TypeScript and JavaScript files, 📖 -> https://github.com/TypeStrong/ts-loader
@@ -22,6 +22,9 @@ module.exports = {
     new IgnorePlugin({
       resourceRegExp: /^pg-native$/,
     }),
+    // new IgnorePlugin({
+    //   resourceRegExp: /^vscode$/,
+    // }),
     new FilterWarningsPlugin({
       exclude: [
         /mongodb/,

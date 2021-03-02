@@ -7402,7 +7402,7 @@ tweetnacl@^1.0.1:
   resolved "https://registry.yarnpkg.com/tweetnacl/-/tweetnacl-1.0.3.tgz#ac0af71680458d8a6378d0d0d050ab1407d35596"
   integrity sha512-6rt+RN7aOi1nGMyC4Xa5DdYiukl2UWCbcJft7YhxReBGQD7OAM8Pbxw6YMo4r2diNEA8FEmu32YOn9rhaiE5yw==
 
-tweetsodium@^0.0.4:
+tweetsodium@0.0.4:
   version "0.0.4"
   resolved "https://registry.yarnpkg.com/tweetsodium/-/tweetsodium-0.0.4.tgz#68debb454b496cbe3063099a81cdaa19950a20b5"
   integrity sha512-nTYzcaSmpd2vcfI8DriuO01l+jIF8TmjNxjFPRyJkdzi5IdJbUstT3G1rk8V9YkzrucNSWoSrA9Z5Yp3RW2cgw==
