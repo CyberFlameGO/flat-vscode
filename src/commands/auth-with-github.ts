@@ -7,8 +7,10 @@ import store from "../store";
 export async function authWithGithub(prompt = false) {
   const { setOctokit, setSessionToken } = store.getState();
   const session = await getSession({ createIfNone: false });
+  vscode.window.showInformationMessage("YESSSSS");
 
   if (session) {
+    vscode.window.showInformationMessage("HAS SESSION" + session);
     setSessionToken(session.accessToken);
     setOctokit(
       new Octokit.Octokit({
@@ -17,7 +19,9 @@ export async function authWithGithub(prompt = false) {
     );
     vscode.commands.executeCommand("setContext", "flat:authedWithGithub", true);
   } else if (prompt) {
+    vscode.window.showInformationMessage("YESSSSS BEFORE PTOMPT");
     const session = await getSession({ createIfNone: true });
+    vscode.window.showInformationMessage("YESSSSS AFTER PTOMPT");
 
     if (session) {
       setSessionToken(session.accessToken);

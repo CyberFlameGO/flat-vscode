@@ -4,6 +4,7 @@ import store from "../store";
 import { getNonce, testConnection } from "../lib";
 import { VSCodeGit } from "../git";
 import { MESSAGES } from "../constants";
+import { ReturningStatementNotSupportedError } from "typeorm";
 
 export class SidebarProvider implements vscode.WebviewViewProvider {
   _view?: vscode.WebviewView;
@@ -32,6 +33,10 @@ export class SidebarProvider implements vscode.WebviewViewProvider {
     };
 
     await updateWebview();
+
+    await vscode.window.showInformationMessage(
+      "made it pas the first update step"
+    );
 
     webviewView.webview.onDidReceiveMessage(async (data) => {
       switch (data.command) {
@@ -126,6 +131,7 @@ export class SidebarProvider implements vscode.WebviewViewProvider {
       owner = details.owner;
     } catch (e) {
       console.error("no upstream, wtf?", e);
+      throw new Error();
     }
 
     const initialAppState = {
@@ -137,21 +143,21 @@ export class SidebarProvider implements vscode.WebviewViewProvider {
     };
 
     return `<!DOCTYPE html>
-			<html lang="en">
-			<head>
-				<meta charset="UTF-8">        
-				<meta name="viewport" content="width=device-width, initial-scale=1.0">
+    	<html lang="en">
+    	<head>
+    		<meta charset="UTF-8">
+    		<meta name="viewport" content="width=device-width, initial-scale=1.0">
         <meta http-equiv="Content-Security-Policy" content="default-src 'none'; style-src ${
           webview.cspSource
         }; img-src ${
       webview.cspSource
     } 'self' data: https:; script-src 'nonce-${nonce}'; connect-src https://api.github.com;">
         <link href="${stylesUri}" rel="stylesheet">
-			</head>
+    	</head>
       <body>
-				<div data-state=${JSON.stringify(initialAppState)} id="app"></div>
+    		<div data-state=${JSON.stringify(initialAppState)} id="app"></div>
         <script nonce="${nonce}" src="${scriptUri}"></script>
-			</body>
-			</html>`;
+    	</body>
+    	</html>`;
   }
 }
