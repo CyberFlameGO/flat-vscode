@@ -10,11 +10,7 @@ export function ManageOrCreate() {
   return (
     <div className="p-4">
       {isLoading && <Spinner>Loading workflow information...</Spinner>}
-      {isSuccess && (
-        <div>
-          <WorkflowRuns />
-        </div>
-      )}
+      {isSuccess && <WorkflowRuns />}
       {isError && <CreateWorkflow />}
     </div>
   );

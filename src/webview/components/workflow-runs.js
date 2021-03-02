@@ -8,18 +8,16 @@ import {
 } from "@reach/accordion";
 import "@reach/accordion/styles.css";
 import { formatRelative } from "date-fns";
-import { ChevronDownIcon, ChevronUpIcon } from "@primer/octicons-react";
+import {
+  ChevronDownIcon,
+  ChevronUpIcon,
+  WorkflowIcon,
+  XCircleIcon,
+} from "@primer/octicons-react";
 
 import { useRun, useWorkflowRuns } from "../hooks";
 import { capitalize } from "../lib";
 import { Spinner } from "./spinner";
-
-function makeWorkflowLabel(run) {
-  const relativeDate = formatRelative(Date.parse(run.created_at), new Date());
-  return `${run.conclusion === "success" ? "✅" : "💥"} ${capitalize(
-    relativeDate
-  )}`;
-}
 
 function RunDetails({ id }) {
   const { isExpanded } = useAccordionItemContext();
@@ -44,12 +42,29 @@ function RunDetails({ id }) {
   );
 }
 
+function WorkflowStatusIndicator({ run }) {
+  const relativeDate = formatRelative(Date.parse(run.created_at), new Date());
+  const icon =
+    run.conclusion === "success" ? (
+      <WorkflowIcon className="icon-success" size={12} />
+    ) : (
+      <XCircleIcon className="icon-error" size={12} />
+    );
+
+  return (
+    <div className="flex items-center space-x-2 text-sm">
+      {icon}
+      <span>{capitalize(relativeDate)}</span>
+    </div>
+  );
+}
+
 function CustomAccordionButton({ run }) {
   const { isExpanded } = useAccordionItemContext();
   return (
     <AccordionButton className="w-full text-left h-8 focus:outline-none focus:ring">
       <div className="flex items-center justify-between">
-        {makeWorkflowLabel(run)}
+        <WorkflowStatusIndicator run={run} />
         <span className="opacity-40">
           {isExpanded ? (
             <ChevronUpIcon size={16} />
@@ -77,7 +92,7 @@ export function WorkflowRuns() {
           Total Runs: <strong>{total_count}</strong>
         </p>
         <hr className="opacity-20" />
-        <Accordion>
+        <Accordion collapsible>
           <div className="space-y-1">
             {workflow_runs.map((run) => {
               return (

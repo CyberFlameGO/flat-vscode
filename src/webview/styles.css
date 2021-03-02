@@ -118,3 +118,11 @@ form input[type="text"] {
     stroke-dashoffset: -124;
   }
 }
+
+.icon-success {
+  color: var(--vscode-terminal-ansiGreen);
+}
+
+.icon-error {
+  color: var(--vscode-errorForeground);
+}
