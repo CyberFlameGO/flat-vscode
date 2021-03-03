@@ -1,5 +1,5 @@
 import React from "react";
-import { BrowserRouter as Router, Switch, Route, Link } from "react-router-dom";
+import { MemoryRouter as Router, Switch, Route, Link } from "react-router-dom";
 
 import { CreateSQLWorkflow } from "../pages/create-sql-workflow";
 import { CreateHTTPWorkflow } from "../pages/create-http-workflow";
