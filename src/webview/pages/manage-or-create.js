@@ -5,12 +5,13 @@ import { WorkflowRuns } from "../components/workflow-runs";
 import { Spinner } from "../components/spinner";
 
 export function ManageOrCreate() {
-  const { isLoading, isSuccess, isError } = useWorkflow();
+  const { isLoading, isSuccess, isError, data } = useWorkflow();
 
   return (
     <div className="p-4">
       {isLoading && <Spinner>Loading workflow information...</Spinner>}
-      {isSuccess && <WorkflowRuns />}
+      {isSuccess && data.state === "active" && <WorkflowRuns />}
+      {isSuccess && data.state === "deleted" && <CreateWorkflow />}
       {isError && <CreateWorkflow />}
     </div>
   );

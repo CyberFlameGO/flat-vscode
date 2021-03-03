@@ -4,11 +4,10 @@ interface ActionParams {
   cron?: string;
   source?: string;
   format?: string;
-  outfile?: string;
 }
 
-export function makeActionYaml(params: ActionParams) {
-  const { name, cron, type, source, format, outfile } = params;
+export function makeActionYaml(params: ActionParams) { 
+  const { name, cron, type, source, format } = params;
   return `name: ${name}
 
 on:
@@ -29,7 +28,6 @@ jobs:
       uses: githubocto/flat@v1
       with:
         ${type === "http" ? `http_url: '${source}'` : ""}
-        ${type === "http" ? `outfile_basename: ${outfile}` : ""}
         ${type === "sql" ? `sql_format: ${format}` : ""}
         ${
           type === "sql"

@@ -8,14 +8,12 @@ import { InputGroup, CronInputGroup } from "../components/forms";
 
 const initialValues = {
   source: "",
-  outfile: "data.json",
   cron: "",
   name: "",
 };
 
 const validationSchema = yup.object().shape({
   source: yup.string().url("URL is invalid.").required("Please enter a URL"),
-  outfile: yup.string().required("Please enter a valid filename"),
   cron: yup
     .string()
     .required("Please enter a CRON schedule")
@@ -52,13 +50,6 @@ function FormComponent({ status, isSubmitting }) {
           label="How often should the data be fetched?"
           id="cron"
           description="Once every..."
-        />
-        <InputGroup
-          name="outfile"
-          label="The filename to use for writing data?"
-          id="outfile"
-          description="e.g., data.json"
-          placeholder="Enter filename"
         />
         <InputGroup
           name="name"

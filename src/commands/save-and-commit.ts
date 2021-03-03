@@ -9,7 +9,6 @@ interface Params {
   cron: string;
   name: string;
   source: string;
-  outfile: string;
 }
 
 export const saveAndCommit = async (params: Params) => {

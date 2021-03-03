@@ -27,9 +27,8 @@ Once authenticated, Flat will either guide you through the steps for creating a 
 To create an HTTP action, you'll be asked for the following inputs:
 
 1. A URL
-2. An output filename
-3. A CRON schedule
-4. A name
+2. A CRON schedule
+3. A name
 
 These inputs will be used to generate and commit a `.github/workflows/flat.yaml` file to your repository.
 
