@@ -2,7 +2,7 @@ import * as vscode from "vscode";
 import * as path from "path";
 import * as fs from "fs";
 
-import { makeActionYaml } from "../lib";
+import { makeActionYaml } from "../yaml";
 import { VSCodeGit } from "../git";
 
 interface Params {
