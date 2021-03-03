@@ -1,5 +1,5 @@
 import React from "react";
-import { Link } from "react-router-dom";
+import { useHistory } from "react-router-dom";
 import { useEvent } from "react-use";
 
 import { HTTPFormik } from "../components/http-formik";
@@ -7,6 +7,7 @@ import { MESSAGES } from "../../constants";
 import { vscode } from "../lib";
 
 export function CreateHTTPWorkflow() {
+  const history = useHistory();
   const [status, setStatus] = React.useState("idle");
 
   const handleMessage = (e) => {
@@ -32,9 +33,12 @@ export function CreateHTTPWorkflow() {
     <div>
       <header>
         <div className="flex items-center space-x-1">
-          <Link className="text-underline" to="/">
+          <button
+            onClick={() => history.push("/")}
+            className="appearance-none text-underline"
+          >
             Home
-          </Link>
+          </button>
           <span>&gt;</span>
           <span className="font-bold">Create HTTP Action</span>
         </div>
