@@ -1,6 +1,7 @@
 {
   "name": "flat",
   "displayName": "Flat",
+  "license": "MIT",
   "publisher": "GitHubOCTO",
   "homepage": "https://github.com/githubocto/flat-vscode/blob/main/README.md",
   "bugs": {
