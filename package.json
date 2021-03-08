@@ -13,7 +13,7 @@
     "url": "https://github.com/githubocto/flat-vscode"
   },
   "description": "VSCode Extension for creating Flat actions.",
-  "version": "0.1.0",
+  "version": "0.3.0",
   "icon": "docs/icon-transparent.png",
   "engines": {
     "vscode": "^1.53.0"
