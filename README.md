@@ -1,5 +1,5 @@
 <p align="center">
-  <img src="docs/logo.png" width=512>
+  <img src="docs/icon.png" width=512>
 </p>
 
 # Flat
