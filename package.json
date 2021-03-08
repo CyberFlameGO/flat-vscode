@@ -14,6 +14,7 @@
   },
   "description": "VSCode Extension for creating Flat actions.",
   "version": "0.1.0",
+  "icon": "docs/icon-transparent.png",
   "engines": {
     "vscode": "^1.53.0"
   },
