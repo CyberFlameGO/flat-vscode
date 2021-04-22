@@ -1,3 +1,7 @@
+# 🚨 📦 This repository is archived, superseded by [flat-editor](https://github.com/githubocto/flat-editor)
+
+---
+
 <p align="center">
   <img src="https://raw.githubusercontent.com/githubocto/flat-vscode/main/docs/icon.png" width=512>
 </p>
